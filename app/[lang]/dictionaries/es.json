@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "title": "Johan Yanten — Diseñador",
+    "description": "Portafolio de Johan Yanten: branding, diseño de información, UX/UI y motion."
+  },
+  "nav": { "work": "Proyectos", "about": "Sobre mí", "contact": "Contacto" },
+  "hero": {
+    "eyebrow": "Diseñador multidisciplinario",
+    "title": "Diseño que se siente.",
+    "subtitle": "Branding, diseño de información, UX/UI y motion. Un portafolio nuevo está en camino.",
+    "cta": "Escríbeme"
+  }
+}
