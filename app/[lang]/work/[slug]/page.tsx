@@ -4,17 +4,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, hasLocale } from "../../dictionaries";
-import { getProject, projects } from "@/lib/projects";
+import { getProjects } from "@/lib/content";
 import { Reveal } from "@/components/Reveal";
 import { PageTransition } from "@/components/PageTransition";
 
 export async function generateStaticParams() {
+  const projects = await getProjects();
   return projects.map((p) => ({ slug: p.slug }));
+}
+
+async function getProject(slug: string) {
+  const projects = await getProjects();
+  const index = projects.findIndex((p) => p.slug === slug);
+  if (index === -1) return null;
+  return { project: projects[index], next: projects[(index + 1) % projects.length] };
 }
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/work/[slug]">): Promise<Metadata> {
   const { lang, slug } = await params;
-  const project = getProject(slug);
+  const project = (await getProject(slug))?.project;
   if (!project || !hasLocale(lang)) return {};
   return {
     title: `${project.title[lang]} — Johan Yanten`,
@@ -25,12 +33,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/work/[slug
 
 export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[slug]">) {
   const { lang, slug } = await params;
-  const project = getProject(slug);
-  if (!hasLocale(lang) || !project) notFound();
+  const found = await getProject(slug);
+  if (!hasLocale(lang) || !found) notFound();
+  const { project, next } = found;
   const dict = await getDictionary(lang);
-
-  const index = projects.indexOf(project);
-  const next = projects[(index + 1) % projects.length];
 
   return (
     <PageTransition>

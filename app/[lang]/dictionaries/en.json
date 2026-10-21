@@ -3,13 +3,10 @@
     "title": "Johan Yanten — Designer",
     "description": "Portfolio of Johan Yanten: branding, information design, UX/UI, data visualization and motion."
   },
-  "nav": { "work": "Work", "about": "About", "contact": "Contact" },
-  "hero": {
-    "eyebrow": "Multidisciplinary designer",
-    "title": "Hi, I’m Johan.",
-    "subtitle": "I design brands, information and interfaces that make sense at first sight and feel good to use.",
-    "cta": "See work",
-    "scroll": "Scroll"
+  "nav": {
+    "work": "Work",
+    "about": "About",
+    "contact": "Contact"
   },
   "work": {
     "eyebrow": "Featured projects",
@@ -35,20 +32,6 @@
       "photoshop": "Advanced image editing, compositing and retouching.",
       "davinci": "Film-grade video editing and color."
     }
-  },
-  "about": {
-    "eyebrow": "About",
-    "title": "Purposeful design, from idea to screen.",
-    "body": [
-      "I’m Johan Yanten, a multidisciplinary designer from Universidad Diego Portales. I work across branding, information design, interfaces and video.",
-      "I like turning complex things into clear ones: data you can feel, brands with personality and interfaces that need no instructions."
-    ]
-  },
-  "contact": {
-    "eyebrow": "Contact",
-    "title": "Every project starts here. Let’s talk.",
-    "subtitle": "Prefer a quick chat? Message me on Instagram.",
-    "cta": "Open chat"
   },
   "project": {
     "back": "Back",

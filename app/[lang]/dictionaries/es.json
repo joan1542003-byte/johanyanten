@@ -3,13 +3,10 @@
     "title": "Johan Yanten — Diseñador integral",
     "description": "Portafolio de Johan Yanten: branding, diseño de información, UX/UI, visualización de datos y motion."
   },
-  "nav": { "work": "Proyectos", "about": "Sobre mí", "contact": "Contacto" },
-  "hero": {
-    "eyebrow": "Diseñador integral",
-    "title": "Hola, soy Johan.",
-    "subtitle": "Diseño marcas, información e interfaces que se entienden a la primera y se sienten bien al usarlas.",
-    "cta": "Ver proyectos",
-    "scroll": "Desliza"
+  "nav": {
+    "work": "Proyectos",
+    "about": "Sobre mí",
+    "contact": "Contacto"
   },
   "work": {
     "eyebrow": "Proyectos destacados",
@@ -35,20 +32,6 @@
       "photoshop": "Edición avanzada de imágenes, composición y retoque.",
       "davinci": "Edición y color de video a nivel cine."
     }
-  },
-  "about": {
-    "eyebrow": "Sobre mí",
-    "title": "Diseño con propósito, de la idea a la pantalla.",
-    "body": [
-      "Soy Johan Yanten, diseñador integral de la Universidad Diego Portales. Me muevo entre el branding, el diseño de información, las interfaces y el video.",
-      "Me interesa traducir lo complejo en algo claro: datos que se sienten, marcas con personalidad e interfaces que no necesitan instrucciones."
-    ]
-  },
-  "contact": {
-    "eyebrow": "Contacto",
-    "title": "El punto de partida. Hablemos.",
-    "subtitle": "¿Prefieres una charla rápida? Escríbeme por Instagram.",
-    "cta": "Ir al chat"
   },
   "project": {
     "back": "Volver",

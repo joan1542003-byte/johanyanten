@@ -4,7 +4,7 @@ import { ViewTransition, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import type { Category, Img } from "@/lib/projects";
+import type { Category, Img } from "@/lib/content";
 import { useTilt } from "./useTilt";
 
 export type CardData = {
