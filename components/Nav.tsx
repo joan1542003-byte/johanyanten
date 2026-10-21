@@ -54,7 +54,7 @@ export function Nav({ lang, labels }: Props) {
       <LiquidGlass className="pointer-events-auto hidden items-center gap-1 p-1.5 sm:flex">
         <Link
           href={`/${lang}`}
-          aria-label="Johan Yanten"
+          aria-label="JY, Johan Yanten"
           className="mr-1 flex h-9 w-9 items-center justify-center rounded-full bg-ink text-[13px] font-semibold tracking-tight text-white transition-transform active:scale-90"
         >
           JY
@@ -66,7 +66,7 @@ export function Nav({ lang, labels }: Props) {
               href={`/${lang}#${s}`}
               onMouseEnter={() => setHovered(s)}
               className={`relative rounded-full px-4 py-2 text-sm transition-colors duration-200 ${
-                highlighted === s ? "text-ink font-medium" : "text-ink/60"
+                highlighted === s ? "text-ink font-medium" : "text-muted"
               }`}
             >
               {highlighted === s && (
@@ -87,9 +87,10 @@ export function Nav({ lang, labels }: Props) {
 
 function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string }) {
   return (
-    <Link href={href} aria-label="Cambiar idioma / Switch language" className="k-well ml-1 inline-flex rounded-full p-0.5 text-xs font-medium">
+    <Link href={href} className="k-well ml-1 inline-flex rounded-full p-0.5 text-xs font-medium">
+      <span className="sr-only">{lang === "es" ? "Cambiar idioma:" : "Switch language:"}</span>
       {["es", "en"].map((l) => (
-        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-ink" : "text-ink/45"}`}>
+        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-ink" : "text-muted"}`}>
           {l === lang && <motion.span layoutId={id} transition={calm} className="k-active absolute inset-0 rounded-full" />}
           <span className="relative">{l}</span>
         </span>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
-import { FontLinks } from "@/components/fonts";
+import { satoshi } from "@/components/fonts";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Sections";
 import { Providers } from "@/components/Providers";
@@ -42,10 +42,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang} data-scroll-behavior="smooth" className="h-full antialiased">
-      <head>
-        <FontLinks />
-      </head>
+    <html lang={lang} data-scroll-behavior="smooth" className={`${satoshi.variable} h-full antialiased`}>
       <body className="min-h-full">
         <Providers>
           <Nav lang={lang} labels={dict.nav} />

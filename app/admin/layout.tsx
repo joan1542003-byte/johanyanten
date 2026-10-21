@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FontLinks } from "@/components/fonts";
+import { satoshi } from "@/components/fonts";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -9,10 +9,7 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
-    <html lang="es" className="h-full antialiased">
-      <head>
-        <FontLinks />
-      </head>
+    <html lang="es" className={`${satoshi.variable} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
     </html>
   );

@@ -33,7 +33,7 @@ export function Hero({ eyebrow, title, subtitle, cta, lang, featured, labels }: 
         </a>
       </FadeUp>
 
-      <FadeUp delay={1.3} className="mt-12">
+      <FadeUp delay={0.7} duration={1.2} className="mt-12">
         <Featured lang={lang} items={featured} labels={labels} />
       </FadeUp>
     </section>

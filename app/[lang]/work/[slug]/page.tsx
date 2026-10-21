@@ -83,7 +83,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
         <FadeUp className="mt-8">
           <div className="flex flex-wrap gap-1.5">
             {project.categories.map((c) => (
-              <span key={c} className="k-tag rounded-lg px-2.5 py-1 text-xs font-medium text-ink/70">
+              <span key={c} className="k-tag rounded-lg px-2.5 py-1 text-xs font-medium text-ink">
                 {dict.work.filters[c]}
               </span>
             ))}

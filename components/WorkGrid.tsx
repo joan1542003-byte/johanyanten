@@ -48,7 +48,7 @@ export function WorkGrid({ lang, projects, labels }: Props) {
             key={f}
             onClick={() => setFilter(f)}
             className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              filter === f ? "text-ink" : "text-ink/55 hover:text-ink"
+              filter === f ? "text-ink" : "text-muted hover:text-ink"
             }`}
           >
             {filter === f && (
@@ -99,7 +99,7 @@ function ProjectCard({ project, newLabel }: { project: CardData; newLabel: strin
         <div className="flex items-center gap-2">
           <h3 className="text-lg leading-snug font-bold tracking-[-0.015em]">{project.title}</h3>
           {project.isNew && (
-            <span className="k-tag shrink-0 rounded-lg px-2 py-0.5 text-xs font-medium text-ink/70">{newLabel}</span>
+            <span className="k-tag shrink-0 rounded-lg px-2 py-0.5 text-xs font-medium text-ink">{newLabel}</span>
           )}
         </div>
         <p className="mt-1 text-[15px] text-muted">{project.tagline}</p>
