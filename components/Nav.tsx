@@ -25,6 +25,7 @@ export function Nav({ lang, labels }: Props) {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 120, damping: 18 }}
+      style={{ viewTransitionName: "site-header" }}
       className="fixed inset-x-0 top-4 z-50 flex justify-center px-4"
     >
       <nav className="glass flex items-center gap-1 rounded-full p-1.5 text-sm">
@@ -35,7 +36,7 @@ export function Nav({ lang, labels }: Props) {
           <motion.div key={l.href} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               href={l.href}
-              className="block rounded-full px-3 py-1.5 text-muted transition-colors hover:bg-white/60 hover:text-foreground"
+              className="block whitespace-nowrap rounded-full px-2.5 py-1.5 text-muted transition-colors sm:px-3 hover:bg-white/60 hover:text-foreground"
             >
               {l.label}
             </Link>

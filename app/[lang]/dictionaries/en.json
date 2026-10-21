@@ -1,13 +1,61 @@
 {
   "meta": {
     "title": "Johan Yanten — Designer",
-    "description": "Portfolio of Johan Yanten: branding, information design, UX/UI and motion."
+    "description": "Portfolio of Johan Yanten: branding, information design, UX/UI, data visualization and motion."
   },
   "nav": { "work": "Work", "about": "About", "contact": "Contact" },
   "hero": {
     "eyebrow": "Multidisciplinary designer",
-    "title": "Design you can feel.",
-    "subtitle": "Branding, information design, UX/UI and motion. A new portfolio is on its way.",
-    "cta": "Get in touch"
-  }
+    "title": "Hi, I’m Johan.",
+    "subtitle": "I design brands, information and interfaces that make sense at first sight and feel good to use.",
+    "cta": "See work",
+    "scroll": "Scroll"
+  },
+  "work": {
+    "eyebrow": "Featured projects",
+    "title": "Selected work",
+    "new": "New",
+    "filters": {
+      "all": "All",
+      "branding": "Branding",
+      "info": "Information",
+      "uxui": "UX/UI",
+      "data": "Data",
+      "motion": "Motion"
+    }
+  },
+  "tools": {
+    "eyebrow": "Tools",
+    "title": "What I work with",
+    "items": {
+      "figma": "Prototyping and interfaces. My home base where every project comes together.",
+      "indesign": "Editorial design, typography and professional layout.",
+      "illustrator": "Logos, icons and precise vector graphics.",
+      "aftereffects": "Animation, micro-interactions and motion graphics.",
+      "photoshop": "Advanced image editing, compositing and retouching.",
+      "davinci": "Film-grade video editing and color."
+    }
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "Purposeful design, from idea to screen.",
+    "body": [
+      "I’m Johan Yanten, a multidisciplinary designer from Universidad Diego Portales. I work across branding, information design, interfaces and video.",
+      "I like turning complex things into clear ones: data you can feel, brands with personality and interfaces that need no instructions."
+    ]
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Every project starts here. Let’s talk.",
+    "subtitle": "Prefer a quick chat? Message me on Instagram.",
+    "cta": "Open chat"
+  },
+  "project": {
+    "back": "Back",
+    "about": "About the project",
+    "video": "Video",
+    "gallery": "Gallery",
+    "next": "Next project"
+  },
+  "footer": "Designed and built by Johan Yanten."
 }

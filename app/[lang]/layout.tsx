@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
 import { Background } from "@/components/Background";
 import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Sections";
 import "../globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -18,6 +19,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
   return {
+    metadataBase: new URL("https://johanyanten.vercel.app"),
     title: dict.meta.title,
     description: dict.meta.description,
     alternates: { languages: { es: "/es", en: "/en" } },
@@ -30,11 +32,12 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang={lang} data-scroll-behavior="smooth" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Background />
         <Nav lang={lang} labels={dict.nav} />
         {children}
+        <Footer text={dict.footer} />
       </body>
     </html>
   );
