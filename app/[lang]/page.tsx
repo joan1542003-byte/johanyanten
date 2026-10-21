@@ -5,6 +5,7 @@ import { Hero } from "@/components/Hero";
 import { WorkGrid } from "@/components/WorkGrid";
 import { PageTransition } from "@/components/PageTransition";
 import { About, Contact, Tools } from "@/components/Sections";
+import { INSTAGRAM, SITE_URL } from "@/lib/site";
 
 export default async function Home({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
@@ -19,12 +20,24 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
     isNew: p.is_new,
     cover: p.cover,
   }));
+  const featured = projects.map((p) => ({ slug: p.slug, title: p.title[lang], src: p.cover.src }));
+
+  // Structured data so search engines know who the site is about
+  const person = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Johan Yanten",
+    url: `${SITE_URL}/${lang}`,
+    jobTitle: lang === "es" ? "Diseñador integral" : "Multidisciplinary designer",
+    sameAs: [INSTAGRAM],
+  };
 
   return (
     <PageTransition>
-      <main className="flex-1">
-        <Hero {...content.hero[lang]} labels={{ ...dict.hero, categories: dict.work.filters }} />
-        <section id="work" className="mx-auto w-full max-w-6xl scroll-mt-24 px-4 py-24 sm:py-32">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
+      <main>
+        <Hero {...content.hero[lang]} lang={lang} featured={featured} labels={dict.hero} />
+        <section id="work" className="scroll-mt-24 px-6 py-14 sm:px-12 sm:py-16">
           <WorkGrid lang={lang} projects={cards} labels={dict.work} />
         </section>
         <Tools {...dict.tools} />

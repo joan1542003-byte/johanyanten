@@ -1,109 +1,113 @@
 @import "tailwindcss";
 
+/* Visual base measured from kree8.studio: soft grays, slate text, layered violet-gray shadows */
 :root {
-  /* Soft neutral canvas, never pure white */
-  --canvas: #ececee;
-  --surface: #fbfbfc;
-  --ink: #111113;
-  --muted: #6c6c74;
-  --line: rgba(17, 17, 19, 0.07);
-  --accent: #3b6cf6;
+  --canvas: #e8e8e8;
+  --panel: #efefef;
+  --ink: #304f67;
+  --muted: #94a3b0;
+  --line: rgba(48, 79, 103, 0.1);
+  --accent: #e0559b;
 
-  /* Kept for the admin panel */
+  /* Aliases used by the admin panel */
   --background: var(--canvas);
   --foreground: var(--ink);
 
-  --raised-shadow:
-    0 0 0 1px rgba(17, 17, 19, 0.05), 0 1px 1px rgba(17, 17, 19, 0.04), 0 6px 16px -4px rgba(17, 17, 19, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(17, 17, 19, 0.03);
-  --raised-shadow-hover:
-    0 0 0 1px rgba(17, 17, 19, 0.06), 0 2px 2px rgba(17, 17, 19, 0.04), 0 18px 40px -10px rgba(17, 17, 19, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(17, 17, 19, 0.03);
+  --shadow-soft:
+    0 1.67px 4.18px rgba(181, 186, 203, 0.31), 0 17.57px 10.88px rgba(181, 187, 203, 0.16),
+    0 31.8px 12.55px rgba(181, 187, 203, 0.05), 0 50.2px 14.23px rgba(181, 193, 203, 0.01);
 }
 
 @theme inline {
   --color-background: var(--canvas);
   --color-foreground: var(--ink);
   --color-canvas: var(--canvas);
-  --color-surface: var(--surface);
+  --color-panel: var(--panel);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-serif);
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background:
-    radial-gradient(120% 60% at 50% -10%, #ffffff 0%, rgba(255, 255, 255, 0) 60%),
-    var(--canvas);
-  background-attachment: fixed;
+  background: var(--canvas);
   color: var(--ink);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-feature-settings: "cv11", "ss01";
+  font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Film grain over everything, very subtle */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  pointer-events: none;
-  opacity: 0.045;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* Main content sheet */
+.k-panel {
+  background: var(--panel);
+  box-shadow:
+    0 1.67px 4.18px rgba(183, 181, 203, 0.31), 0 8.37px 8.37px rgba(183, 181, 203, 0.27),
+    0 17.57px 10.88px rgba(183, 181, 203, 0.16), 0 31.8px 12.55px rgba(183, 181, 203, 0.05),
+    0 50.21px 14.23px rgba(183, 181, 203, 0.01);
 }
 
-/* ---------- Tactile surfaces ---------- */
-
-/* White, slightly lifted, lit from above */
-.raised {
-  background: linear-gradient(180deg, #ffffff 0%, var(--surface) 100%);
-  box-shadow: var(--raised-shadow);
+/* White pill with an inner glow */
+.k-button {
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-soft), inset 0 7px 32px #fff;
+  transition: transform 150ms ease-out, box-shadow 200ms ease-out;
+}
+.k-button:active {
+  transform: scale(0.97);
 }
 
-/* Recessed tray that holds controls */
-.well {
-  background: rgba(17, 17, 19, 0.045);
-  box-shadow: inset 0 1px 2px rgba(17, 17, 19, 0.06), inset 0 0 0 1px rgba(17, 17, 19, 0.03);
+/* Active navigation pill */
+.k-active {
+  background: #f0f2f5;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-soft), inset 0 7px 32px #fff;
 }
 
-/* Blurred multi-color gradient button, gently drifting */
-.mesh {
+/* Media frame: thick white border sitting on a solid lip */
+.k-frame {
+  background: #fafafa;
+  border: 8px solid #fff;
+  box-shadow:
+    0 11px 0 rgba(206, 215, 222, 0.75), 0 7px 7px rgba(183, 181, 203, 0.27),
+    0 14.76px 9.13px rgba(183, 181, 203, 0.16), 0 26.7px 10.54px rgba(183, 181, 203, 0.05);
+}
+
+/* Recessed tray for tabs and tags */
+.k-well {
+  background: #e6e7e9;
+  box-shadow: inset 0 0.55px 2.19px rgba(0, 0, 0, 0.08);
+}
+
+/* Small neutral tag */
+.k-tag {
+  background: rgba(213, 219, 224, 0.45);
+}
+
+/* The one colorful element: primary contact button */
+.k-gradient {
   color: #fff;
   background:
-    radial-gradient(60% 90% at 15% 20%, #ff7ac6 0%, transparent 60%),
-    radial-gradient(60% 90% at 85% 15%, #ffb36b 0%, transparent 60%),
-    radial-gradient(70% 100% at 60% 100%, #7b6bff 0%, transparent 65%),
-    #ff8fb1;
-  background-size: 160% 160%;
-  animation: mesh-drift 8s ease-in-out infinite alternate;
+    radial-gradient(70% 120% at 15% 10%, #ff8fcf 0%, transparent 60%),
+    radial-gradient(70% 120% at 90% 20%, #ffb37a 0%, transparent 60%),
+    radial-gradient(90% 120% at 60% 110%, #8a7bff 0%, transparent 70%),
+    #f27fb8;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.35) inset, 0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 8px 22px -6px rgba(214, 74, 160, 0.55), 0 2px 4px rgba(17, 17, 19, 0.08);
-  text-shadow: 0 1px 1px rgba(120, 30, 90, 0.25);
-}
-@keyframes mesh-drift {
-  from { background-position: 0% 0%; }
-  to { background-position: 100% 100%; }
+    inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 10px 24px -8px rgba(214, 74, 160, 0.5);
 }
 
-/* Fallback glass (non-Chromium browsers and the admin panel) */
+/* Highlighter stroke for *marked* words */
+.k-mark {
+  background: linear-gradient(transparent 58%, rgba(255, 143, 207, 0.35) 58%, rgba(255, 143, 207, 0.35) 92%, transparent 92%);
+  padding: 0 0.08em;
+}
+
+/* Fallback glass for non-Chromium browsers and the admin panel */
 .glass {
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(18px) saturate(170%);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 10px 30px -10px rgba(17, 17, 19, 0.18), 0 0 0 1px rgba(17, 17, 19, 0.05);
-}
-
-.font-display {
-  font-family: var(--font-serif), Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-soft), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -115,44 +119,40 @@ body::after {
 
 /* ---------- View transitions ---------- */
 ::view-transition-group(.morph) {
-  animation-duration: 500ms;
+  animation-duration: 750ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-::view-transition-image-pair(.morph) {
-  animation-name: via-blur;
-}
-@keyframes via-blur {
-  30% { filter: blur(3px); }
 }
 
 ::view-transition-old(.nav-forward) {
-  --slide-offset: -60px;
-  animation: 150ms ease-in both fade reverse, 400ms ease-in-out both slide reverse;
+  --slide-offset: -40px;
+  animation: 280ms ease-in both fade reverse, 650ms cubic-bezier(0.22, 1, 0.36, 1) both slide reverse;
 }
 ::view-transition-new(.nav-forward) {
-  --slide-offset: 60px;
-  animation: 210ms ease-out 150ms both fade, 400ms ease-in-out both slide;
+  --slide-offset: 40px;
+  animation: 450ms ease-out 220ms both fade, 650ms cubic-bezier(0.22, 1, 0.36, 1) both slide;
 }
 ::view-transition-old(.nav-back) {
-  --slide-offset: 60px;
-  animation: 150ms ease-in both fade reverse, 400ms ease-in-out both slide reverse;
+  --slide-offset: 40px;
+  animation: 280ms ease-in both fade reverse, 650ms cubic-bezier(0.22, 1, 0.36, 1) both slide reverse;
 }
 ::view-transition-new(.nav-back) {
-  --slide-offset: -60px;
-  animation: 210ms ease-out 150ms both fade, 400ms ease-in-out both slide;
-}
-::view-transition-group(site-header) {
-  animation: none;
-  z-index: 100;
+  --slide-offset: -40px;
+  animation: 450ms ease-out 220ms both fade, 650ms cubic-bezier(0.22, 1, 0.36, 1) both slide;
 }
 @keyframes fade {
-  from { filter: blur(3px); opacity: 0; }
-  to { filter: blur(0); opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes slide {
   from { translate: var(--slide-offset); }
   to { translate: 0; }
 }
 
+:focus-visible {
+  outline: 2px solid #304f67;
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
 html { scroll-behavior: smooth; }
-::selection { background: rgba(59, 108, 246, 0.18); }
+::selection { background: rgba(255, 143, 207, 0.3); }

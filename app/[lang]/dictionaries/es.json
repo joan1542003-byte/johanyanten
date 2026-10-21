@@ -10,8 +10,8 @@
     "menu": "Menú"
   },
   "work": {
-    "eyebrow": "Proyectos destacados",
-    "title": "Trabajo *seleccionado*",
+    "eyebrow": "Proyectos",
+    "title": "Algunos proyectos en *branding, información, UX/UI y motion*.",
     "new": "Nuevo",
     "filters": {
       "all": "Todo",
@@ -20,12 +20,11 @@
       "uxui": "UX/UI",
       "data": "Datos",
       "motion": "Motion"
-    },
-    "view": "Ver proyecto"
+    }
   },
   "tools": {
     "eyebrow": "Herramientas",
-    "title": "Con qué *trabajo*",
+    "title": "Las herramientas con las que *trabajo* cada día.",
     "items": {
       "figma": "Prototipado e interfaces. Mi centro de operaciones donde unifico los proyectos.",
       "indesign": "Diseño editorial, tipografía y maquetación profesional.",
@@ -33,8 +32,7 @@
       "aftereffects": "Animaciones, microinteracciones y motion graphics.",
       "photoshop": "Edición avanzada de imágenes, composición y retoque.",
       "davinci": "Edición y color de video a nivel cine."
-    },
-    "hint": "Pasa el cursor por el dock para conocer cada herramienta."
+    }
   },
   "project": {
     "back": "Volver",
@@ -46,8 +44,8 @@
   "footer": "Diseñado y construido por Johan Yanten.",
   "hero": {
     "contact": "Hablemos",
-    "drag": "Arrástrame",
-    "bold": "Negrita"
+    "view": "Ver proyecto",
+    "next": "Otro proyecto"
   },
   "contact": {
     "copied": "¡Copiado!"

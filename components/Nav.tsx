@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { LiquidGlass } from "./LiquidGlass";
+import { calm, ease } from "@/lib/motion";
 
 type Props = {
   lang: string;
@@ -14,7 +15,6 @@ type Props = {
 const sections = ["work", "about", "contact"] as const;
 type Section = (typeof sections)[number];
 
-const spring = { type: "spring", stiffness: 420, damping: 34 } as const;
 
 export function Nav({ lang, labels }: Props) {
   const pathname = usePathname();
@@ -47,8 +47,7 @@ export function Nav({ lang, labels }: Props) {
     <motion.header
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 140, damping: 18, delay: 0.1 }}
-      style={{ viewTransitionName: "site-header" }}
+      transition={{ duration: 0.9, ease, delay: 0.2 }}
       className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4"
     >
       {/* Desktop */}
@@ -67,11 +66,11 @@ export function Nav({ lang, labels }: Props) {
               href={`/${lang}#${s}`}
               onMouseEnter={() => setHovered(s)}
               className={`relative rounded-full px-4 py-2 text-sm transition-colors duration-200 ${
-                highlighted === s ? "text-ink" : "text-ink/60"
+                highlighted === s ? "text-ink font-medium" : "text-ink/60"
               }`}
             >
               {highlighted === s && (
-                <motion.span layoutId="nav-indicator" transition={spring} className="raised absolute inset-0 rounded-full" />
+                <motion.span layoutId="nav-indicator" transition={calm} className="k-active absolute inset-0 rounded-full" />
               )}
               <span className="relative">{labels[s]}</span>
             </Link>
@@ -88,10 +87,10 @@ export function Nav({ lang, labels }: Props) {
 
 function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string }) {
   return (
-    <Link href={href} aria-label="Cambiar idioma / Switch language" className="well ml-1 inline-flex rounded-full p-0.5 text-xs font-medium">
+    <Link href={href} aria-label="Cambiar idioma / Switch language" className="k-well ml-1 inline-flex rounded-full p-0.5 text-xs font-medium">
       {["es", "en"].map((l) => (
         <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-ink" : "text-ink/45"}`}>
-          {l === lang && <motion.span layoutId={id} className="raised absolute inset-0 rounded-full" />}
+          {l === lang && <motion.span layoutId={id} transition={calm} className="k-active absolute inset-0 rounded-full" />}
           <span className="relative">{l}</span>
         </span>
       ))}
@@ -121,8 +120,8 @@ function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props[
       initial={false}
       animate={{ height: open ? 268 : 52, width: open ? openW : closedW }}
       transition={{
-        height: { ...spring, delay: open ? 0 : 0.22 },
-        width: { ...spring, delay: open ? 0.16 : 0.08 },
+        height: { duration: 0.5, ease, delay: open ? 0 : 0.4 },
+        width: { duration: 0.5, ease, delay: open ? 0.35 : 0.1 },
       }}
     >
       <LiquidGlass radius={26} tint={open ? 0.94 : 0.32} className="flex h-full w-full flex-col overflow-hidden p-1.5">
@@ -141,10 +140,10 @@ function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props[
             onClick={toggle}
             aria-expanded={open}
             aria-label={labels.menu}
-            className="raised ml-auto flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full"
+            className="k-button ml-auto flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full"
           >
-            <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 3 : 0 }} className="h-[1.5px] w-4 rounded bg-ink" />
-            <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -3.5 : 0 }} className="h-[1.5px] w-4 rounded bg-ink" />
+            <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 3 : 0 }} transition={calm} className="h-[1.5px] w-4 rounded bg-ink" />
+            <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -3.5 : 0 }} transition={calm} className="h-[1.5px] w-4 rounded bg-ink" />
           </button>
         </div>
         <AnimatePresence>
@@ -154,15 +153,18 @@ function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props[
               animate="show"
               exit="hidden"
               variants={{
-                show: { transition: { staggerChildren: 0.05, delayChildren: 0.34 } },
-                hidden: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+                show: { transition: { staggerChildren: 0.08, delayChildren: 0.75 } },
+                hidden: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
               }}
               className="flex flex-1 flex-col justify-between px-3 pt-4 pb-2"
             >
               {sections.map((s) => (
                 <motion.div
                   key={s}
-                  variants={{ hidden: { opacity: 0, y: 8, filter: "blur(4px)" }, show: { opacity: 1, y: 0, filter: "blur(0px)" } }}
+                  variants={{
+                    hidden: { opacity: 0, y: 10, transition: { duration: 0.25, ease } },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease } },
+                  }}
                 >
                   <Link href={`/${lang}#${s}`} onClick={() => setOpen(false)} className="block py-1.5 text-2xl font-medium tracking-tight">
                     {labels[s]}

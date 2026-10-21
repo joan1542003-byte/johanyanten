@@ -14,8 +14,8 @@ const isChromium = () =>
  * The blurred neutral-gray core leaves the middle untouched, so only the rim bends light.
  */
 function displacementMap(w: number, h: number, radius: number) {
-  const rim = Math.max(6, Math.min(w, h) * 0.2);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+  const rim = Math.max(8, Math.min(w, h) * 0.3);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
 <defs>
 <linearGradient id="r" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f00"/><stop offset="1" stop-color="#000"/></linearGradient>
 <linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#00f"/></linearGradient>
@@ -40,7 +40,12 @@ type Props = {
   tint?: number;
 };
 
-export function LiquidGlass({ children, className = "", style, radius = 999, strength = 38, tint = 0.32 }: Props) {
+/**
+ * Glass that bends what passes behind its edges. Important: no ancestor may have
+ * view-transition-name, filter, opacity < 1 or another backdrop-filter, or the
+ * browser hides the backdrop from it.
+ */
+export function LiquidGlass({ children, className = "", style, radius = 999, strength = 34, tint = 0.3 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const id = `lg${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
@@ -50,15 +55,15 @@ export function LiquidGlass({ children, className = "", style, radius = 999, str
     const el = ref.current;
     if (!el || !chromium) return;
     const ro = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setSize({ w: Math.round(width), h: Math.round(height) });
+      const box = entry.borderBoxSize[0];
+      setSize({ w: Math.round(box.inlineSize), h: Math.round(box.blockSize) });
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, [chromium]);
 
-  const r = size ? Math.min(radius, size.h / 2) : 0;
   const refract = chromium && size && size.w > 0 && size.h > 0;
+  const r = size ? Math.min(radius, size.h / 2) : 0;
 
   return (
     <div
@@ -68,31 +73,41 @@ export function LiquidGlass({ children, className = "", style, radius = 999, str
         ...style,
         borderRadius: radius,
         background: `rgba(255,255,255,${tint})`,
-        transition: "background-color 300ms",
-        backdropFilter: refract ? `url(#${id}) blur(2px) saturate(1.6) brightness(1.05)` : "blur(16px) saturate(1.7)",
+        transition: "background-color 400ms ease",
+        backdropFilter: refract ? `url(#${id}) blur(1.5px) saturate(1.5) brightness(1.04)` : "blur(16px) saturate(1.7)",
         WebkitBackdropFilter: "blur(16px) saturate(1.7)",
         boxShadow:
-          "inset 0 0 0 1px rgba(255,255,255,0.55), inset 0 1px 1px rgba(255,255,255,0.9), inset 0 -6px 14px -8px rgba(255,255,255,0.6), 0 12px 32px -12px rgba(17,17,19,0.22), 0 0 0 1px rgba(17,17,19,0.06)",
+          "inset 0 0 0 1px rgba(255,255,255,0.6), inset 0 1px 1px rgba(255,255,255,0.95), inset 0 -8px 16px -10px rgba(255,255,255,0.7), 0 12px 32px -12px rgba(48,79,103,0.25), 0 0 0 1px rgba(48,79,103,0.06)",
       }}
     >
       {refract && (
         <svg aria-hidden width="0" height="0" style={{ position: "absolute" }}>
-          <filter id={id} colorInterpolationFilters="sRGB">
+          {/* Region and map in real pixels: percentage sizes misplace the map under backdrop-filter */}
+          <filter
+            id={id}
+            filterUnits="userSpaceOnUse"
+            primitiveUnits="userSpaceOnUse"
+            x="0"
+            y="0"
+            width={size.w}
+            height={size.h}
+            colorInterpolationFilters="sRGB"
+          >
             <feImage
               href={displacementMap(size.w, size.h, r)}
               x="0"
               y="0"
-              width="100%"
-              height="100%"
+              width={size.w}
+              height={size.h}
               preserveAspectRatio="none"
               result="map"
             />
-            {/* Each color channel bends a little differently: a hint of chromatic aberration */}
+            {/* Each color channel bends slightly differently: a faint chromatic edge */}
             {(
               [
                 ["r", strength, "1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"],
-                ["g", strength - 4, "0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0"],
-                ["b", strength - 8, "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0"],
+                ["g", strength - 3, "0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0"],
+                ["b", strength - 6, "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0"],
               ] as const
             ).map(([c, s, m]) => [
               <feDisplacementMap

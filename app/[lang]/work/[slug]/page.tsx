@@ -5,11 +5,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, hasLocale } from "../../dictionaries";
 import { getProjects } from "@/lib/content";
-import { Reveal } from "@/components/Reveal";
 import { PageTransition } from "@/components/PageTransition";
-import { PixelImage } from "@/components/PixelImage";
-import { CategoryChip } from "@/components/Chip";
-import { Emphasis } from "@/components/Emphasis";
+import { SectionLabel } from "@/components/Mark";
+import { FadeUp } from "@/components/amicro/fade-up";
+import { ScrollReveal } from "@/components/amicro/scroll-reveal";
+import { StickyReveal } from "@/components/amicro/sticky-reveal";
+import { ProgressIndicator } from "@/components/amicro/progress-indicator";
 
 export async function generateStaticParams() {
   const projects = await getProjects();
@@ -28,9 +29,14 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/work/[slug
   const project = (await getProject(slug))?.project;
   if (!project || !hasLocale(lang)) return {};
   return {
-    title: `${project.title[lang]} — Johan Yanten`,
+    title: project.title[lang],
     description: project.description[0]?.[lang],
-    openGraph: { images: [project.cover.src] },
+    alternates: {
+      canonical: `/${lang}/work/${slug}`,
+      languages: { es: `/es/work/${slug}`, en: `/en/work/${slug}` },
+    },
+    openGraph: { type: "article", images: [project.cover.src] },
+    twitter: { card: "summary_large_image", images: [project.cover.src] },
   };
 }
 
@@ -41,62 +47,84 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
   const { project, next } = found;
   const dict = await getDictionary(lang);
 
+  const paragraphs = project.description.map((p) => p[lang]).filter((p) => p.trim());
+  const gallery = project.gallery;
+  // Paragraphs pair with gallery images in the sticky section; any extra ones go above it
+  const intro = gallery.length ? paragraphs.slice(gallery.length) : paragraphs;
+  const steps = gallery.map((img, i) => ({
+    title: `${String(i + 1).padStart(2, "0")} / ${String(gallery.length).padStart(2, "0")}`,
+    description: paragraphs[i] ?? "",
+    content: (
+      <div className="k-frame overflow-hidden rounded-[32px]">
+        <Image
+          src={img.src}
+          alt={`${project.title[lang]} — ${i + 1}`}
+          width={img.w}
+          height={img.h}
+          sizes="(min-width: 768px) 520px, 100vw"
+          className="max-h-[62vh] w-auto rounded-[24px] object-contain"
+        />
+      </div>
+    ),
+  }));
 
   return (
     <PageTransition>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-28 pb-16">
+      <ProgressIndicator height={3} color="k-gradient" />
+      <main className="px-6 pt-10 pb-6 sm:px-12 sm:pt-12">
         <Link
           href={`/${lang}#work`}
           transitionTypes={["nav-back"]}
-          className="raised inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-transform hover:-translate-x-0.5 active:scale-95"
+          className="k-button inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
         >
           ← {dict.project.back}
         </Link>
 
-        <Reveal className="mt-10">
-          <div className="flex flex-wrap gap-2">
+        <FadeUp className="mt-8">
+          <div className="flex flex-wrap gap-1.5">
             {project.categories.map((c) => (
-              <CategoryChip key={c} category={c} label={dict.work.filters[c]} size="sm" />
+              <span key={c} className="k-tag rounded-lg px-2.5 py-1 text-xs font-medium text-ink/70">
+                {dict.work.filters[c]}
+              </span>
             ))}
           </div>
-          <h1 className="mt-5 text-5xl font-semibold tracking-[-0.045em] text-balance sm:text-7xl">
-            <Emphasis text={project.title[lang]} />
+          <h1 className="mt-5 text-[clamp(2rem,5vw,3.25rem)] leading-[1.15] font-bold tracking-[-0.03em] text-balance">
+            {project.title[lang]} <span className="text-muted">{project.tagline[lang]}</span>
           </h1>
-          <p className="mt-3 text-lg text-muted">{project.tagline[lang]}</p>
-        </Reveal>
+        </FadeUp>
 
-        <div className="raised mt-10 overflow-hidden rounded-[32px] p-2">
-          <ViewTransition name={`cover-${project.slug}`} share="morph" default="none">
-            <Image
-              src={project.cover.src}
-              alt={project.title[lang]}
-              width={project.cover.w}
-              height={project.cover.h}
-              sizes="(min-width: 1024px) 1024px, 100vw"
-              preload
-              className="max-h-[80svh] w-full rounded-[26px] object-cover"
-            />
-          </ViewTransition>
-        </div>
-
-        <section className="mt-16 grid gap-6 md:grid-cols-[1fr_2fr] md:gap-16">
-          <Reveal>
-            <h2 className="text-sm font-medium text-muted">{dict.project.about}</h2>
-          </Reveal>
-          <div className="space-y-5">
-            {project.description.map((p, i) => (
-              <Reveal key={i} delay={i * 0.08}>
-                <p className="text-xl leading-relaxed text-pretty">{p[lang]}</p>
-              </Reveal>
-            ))}
+        <FadeUp delay={0.15} className="mt-10">
+          <div className="k-frame overflow-hidden rounded-[40px]">
+            <ViewTransition name={`cover-${project.slug}`} share="morph" default="none">
+              <Image
+                src={project.cover.src}
+                alt={project.title[lang]}
+                width={project.cover.w}
+                height={project.cover.h}
+                sizes="(min-width: 920px) 840px, 100vw"
+                preload
+                className="max-h-[75svh] w-full rounded-[32px] object-cover"
+              />
+            </ViewTransition>
           </div>
-        </section>
+        </FadeUp>
+
+        {intro.length > 0 && (
+          <section className="mt-16">
+            <SectionLabel>{dict.project.about}</SectionLabel>
+            {intro.map((p, i) => (
+              <ScrollReveal key={i} scale={1} yOffset={16}>
+                <p className="mt-5 text-[clamp(1.1rem,2vw,1.4rem)] leading-[1.6] font-medium tracking-[-0.015em]">{p}</p>
+              </ScrollReveal>
+            ))}
+          </section>
+        )}
 
         {project.youtube && (
-          <Reveal className="mt-16">
-            <div className="raised overflow-hidden rounded-[32px] p-2">
+          <ScrollReveal scale={1} yOffset={16} className="mt-16">
+            <div className="k-frame overflow-hidden rounded-[40px]">
               <iframe
-                className="aspect-video w-full rounded-[26px]"
+                className="aspect-video w-full rounded-[32px]"
                 src={`https://www.youtube-nocookie.com/embed/${project.youtube}?rel=0&modestbranding=1&playsinline=1`}
                 title={`${dict.project.video}: ${project.title[lang]}`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -104,57 +132,46 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
                 loading="lazy"
               />
             </div>
-          </Reveal>
+          </ScrollReveal>
         )}
 
-        {project.gallery.length > 0 && (
-          <section className="mt-16 grid gap-4 sm:grid-cols-2 sm:gap-5" aria-label={dict.project.gallery}>
-            {project.gallery.map((img, i) => {
-              const wide = img.w / img.h > 1.5;
-              return (
-                <Reveal key={img.src} delay={(i % 2) * 0.08} className={wide ? "sm:col-span-2" : ""}>
-                  <div className="raised rounded-[28px] p-2">
-                    <div className="relative overflow-hidden rounded-[22px]" style={{ aspectRatio: `${img.w} / ${img.h}` }}>
-                      <PixelImage
-                        src={img.src}
-                        alt={`${project.title[lang]} — ${i + 1}`}
-                        sizes={wide ? "(min-width: 1024px) 1024px, 100vw" : "(min-width: 640px) 50vw, 100vw"}
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
+        {steps.length > 0 && (
+          <section className="mt-16">
+            <SectionLabel>{dict.project.gallery}</SectionLabel>
+            <StickyReveal
+              content={steps}
+              className="text-[clamp(1.05rem,1.8vw,1.25rem)] font-medium tracking-[-0.01em]"
+            />
           </section>
         )}
 
-        <Reveal className="mt-24">
+        <ScrollReveal scale={1} yOffset={16} className="mt-16">
+          <SectionLabel>{dict.project.next}</SectionLabel>
           <Link
             href={`/${lang}/work/${next.slug}`}
             transitionTypes={["nav-forward"]}
-            className="raised group flex items-center gap-5 rounded-[28px] p-2 pr-6 transition-shadow hover:shadow-[var(--raised-shadow-hover)]"
+            className="k-button group flex items-center gap-5 rounded-[32px] p-2 pr-6"
           >
-            <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-[22px] sm:h-28 sm:w-44">
+            <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-[26px] sm:h-28 sm:w-44">
               <ViewTransition name={`cover-${next.slug}`} share="morph" default="none">
                 <Image
                   src={next.cover.src}
                   alt={next.title[lang]}
                   fill
                   sizes="176px"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
               </ViewTransition>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-muted">{dict.project.next}</p>
-              <p className="mt-1 truncate text-xl font-semibold tracking-tight sm:text-2xl">{next.title[lang]}</p>
+              <p className="truncate text-xl font-bold tracking-[-0.02em]">{next.title[lang]}</p>
+              <p className="truncate text-muted">{next.tagline[lang]}</p>
             </div>
-            <span className="mesh flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-transform duration-300 group-hover:translate-x-1">
+            <span aria-hidden className="text-xl transition-transform duration-200 ease-out group-hover:translate-x-1">
               →
             </span>
           </Link>
-        </Reveal>
+        </ScrollReveal>
       </main>
     </PageTransition>
   );
