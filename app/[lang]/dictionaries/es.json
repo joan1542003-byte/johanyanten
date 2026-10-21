@@ -6,11 +6,12 @@
   "nav": {
     "work": "Proyectos",
     "about": "Sobre mí",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "menu": "Menú"
   },
   "work": {
     "eyebrow": "Proyectos destacados",
-    "title": "Trabajo seleccionado",
+    "title": "Trabajo *seleccionado*",
     "new": "Nuevo",
     "filters": {
       "all": "Todo",
@@ -19,11 +20,12 @@
       "uxui": "UX/UI",
       "data": "Datos",
       "motion": "Motion"
-    }
+    },
+    "view": "Ver proyecto"
   },
   "tools": {
     "eyebrow": "Herramientas",
-    "title": "Con qué trabajo",
+    "title": "Con qué *trabajo*",
     "items": {
       "figma": "Prototipado e interfaces. Mi centro de operaciones donde unifico los proyectos.",
       "indesign": "Diseño editorial, tipografía y maquetación profesional.",
@@ -31,7 +33,8 @@
       "aftereffects": "Animaciones, microinteracciones y motion graphics.",
       "photoshop": "Edición avanzada de imágenes, composición y retoque.",
       "davinci": "Edición y color de video a nivel cine."
-    }
+    },
+    "hint": "Pasa el cursor por el dock para conocer cada herramienta."
   },
   "project": {
     "back": "Volver",
@@ -40,5 +43,14 @@
     "gallery": "Galería",
     "next": "Siguiente proyecto"
   },
-  "footer": "Diseñado y construido por Johan Yanten."
+  "footer": "Diseñado y construido por Johan Yanten.",
+  "hero": {
+    "contact": "Hablemos",
+    "drag": "Arrástrame",
+    "bold": "Negrita"
+  },
+  "contact": {
+    "copied": "¡Copiado!"
+  },
+  "top": "Volver arriba"
 }

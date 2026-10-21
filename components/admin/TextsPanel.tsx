@@ -13,7 +13,7 @@ type Key = keyof SiteContent;
 const sections: {
   key: Key;
   title: string;
-  fields: { name: string; label: string; multiline?: boolean; paragraphs?: boolean }[];
+  fields: { name: string; label: string; hint?: string; multiline?: boolean; paragraphs?: boolean }[];
   shared?: { name: string; label: string; hint?: string }[];
 }[] = [
   {
@@ -21,7 +21,7 @@ const sections: {
     title: "Portada",
     fields: [
       { name: "eyebrow", label: "Texto pequeño superior" },
-      { name: "title", label: "Título" },
+      { name: "title", label: "Título", hint: "Usa *asteriscos* para la palabra en cursiva" },
       { name: "subtitle", label: "Bajada", multiline: true },
       { name: "cta", label: "Botón" },
       { name: "scroll", label: "Indicador de scroll" },
@@ -32,7 +32,7 @@ const sections: {
     title: "Sobre mí",
     fields: [
       { name: "eyebrow", label: "Texto pequeño superior" },
-      { name: "title", label: "Título" },
+      { name: "title", label: "Título", hint: "Usa *asteriscos* para la palabra en cursiva" },
       { name: "body", label: "Texto", multiline: true, paragraphs: true },
     ],
   },
@@ -41,7 +41,7 @@ const sections: {
     title: "Contacto",
     fields: [
       { name: "eyebrow", label: "Texto pequeño superior" },
-      { name: "title", label: "Título" },
+      { name: "title", label: "Título", hint: "Usa *asteriscos* para la palabra en cursiva" },
       { name: "subtitle", label: "Bajada", multiline: true },
       { name: "cta", label: "Botón" },
     ],
@@ -102,7 +102,7 @@ export function TextsPanel({ session }: { session: Session }) {
               <LocalizedField
                 key={f.name}
                 label={f.label}
-                hint={f.paragraphs ? "Deja una línea en blanco entre párrafos" : undefined}
+                hint={f.paragraphs ? "Deja una línea en blanco entre párrafos" : f.hint}
                 multiline={f.multiline}
                 rows={f.paragraphs ? 7 : 3}
                 value={{ es: get("es", f.name), en: get("en", f.name) }}

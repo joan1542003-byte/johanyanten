@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Geist, Geist_Mono } from "next/font/google";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
-import { Background } from "@/components/Background";
+import { fontVariables } from "@/components/fonts";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Sections";
 import "../globals.css";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export async function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -32,12 +28,11 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang} data-scroll-behavior="smooth" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
-        <Background />
+    <html lang={lang} data-scroll-behavior="smooth" className={`${fontVariables} h-full antialiased`}>
+      <body className="flex min-h-full flex-col">
         <Nav lang={lang} labels={dict.nav} />
         {children}
-        <Footer text={dict.footer} />
+        <Footer text={dict.footer} top={dict.top} />
       </body>
     </html>
   );

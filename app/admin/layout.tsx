@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { Background } from "@/components/Background";
+import { fontVariables } from "@/components/fonts";
 import "../globals.css";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Panel · Johan Yanten",
@@ -12,11 +9,8 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
-    <html lang="es" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="min-h-full">
-        <Background />
-        {children}
-      </body>
+    <html lang="es" className={`${fontVariables} h-full antialiased`}>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

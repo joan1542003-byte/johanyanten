@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
+import { Emphasis } from "./Emphasis";
 
 // Fades and lifts content in as it scrolls into view
 export function Reveal({
@@ -26,11 +27,16 @@ export function Reveal({
   );
 }
 
-export function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) {
+export function SectionHeading({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
   return (
-    <Reveal className="mb-10 text-center sm:mb-14">
-      <p className="text-sm font-medium uppercase tracking-[0.2em] text-accent">{eyebrow}</p>
-      <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-6xl">{title}</h2>
+    <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-6 sm:mb-14">
+      <div>
+        <p className="text-sm font-medium text-muted">{eyebrow}</p>
+        <h2 className="mt-2 text-4xl font-semibold tracking-[-0.035em] sm:text-6xl">
+          <Emphasis text={title} />
+        </h2>
+      </div>
+      {children}
     </Reveal>
   );
 }

@@ -1,37 +1,109 @@
 @import "tailwindcss";
 
 :root {
-  /* Off-white base, never pure white */
-  --background: #f4f3ef;
-  --foreground: #1d1d1f;
-  --muted: #6e6e73;
-  --accent: #0a84ff;
-  --glass: rgba(255, 255, 255, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.7);
-  --glass-shadow: 0 8px 32px rgba(29, 29, 31, 0.08);
+  /* Soft neutral canvas, never pure white */
+  --canvas: #ececee;
+  --surface: #fbfbfc;
+  --ink: #111113;
+  --muted: #6c6c74;
+  --line: rgba(17, 17, 19, 0.07);
+  --accent: #3b6cf6;
+
+  /* Kept for the admin panel */
+  --background: var(--canvas);
+  --foreground: var(--ink);
+
+  --raised-shadow:
+    0 0 0 1px rgba(17, 17, 19, 0.05), 0 1px 1px rgba(17, 17, 19, 0.04), 0 6px 16px -4px rgba(17, 17, 19, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(17, 17, 19, 0.03);
+  --raised-shadow-hover:
+    0 0 0 1px rgba(17, 17, 19, 0.06), 0 2px 2px rgba(17, 17, 19, 0.04), 0 18px 40px -10px rgba(17, 17, 19, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(17, 17, 19, 0.03);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--canvas);
+  --color-foreground: var(--ink);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-serif);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background:
+    radial-gradient(120% 60% at 50% -10%, #ffffff 0%, rgba(255, 255, 255, 0) 60%),
+    var(--canvas);
+  background-attachment: fixed;
+  color: var(--ink);
   font-family: var(--font-sans), system-ui, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-tap-highlight-color: transparent;
 }
 
+/* Film grain over everything, very subtle */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Tactile surfaces ---------- */
+
+/* White, slightly lifted, lit from above */
+.raised {
+  background: linear-gradient(180deg, #ffffff 0%, var(--surface) 100%);
+  box-shadow: var(--raised-shadow);
+}
+
+/* Recessed tray that holds controls */
+.well {
+  background: rgba(17, 17, 19, 0.045);
+  box-shadow: inset 0 1px 2px rgba(17, 17, 19, 0.06), inset 0 0 0 1px rgba(17, 17, 19, 0.03);
+}
+
+/* Blurred multi-color gradient button, gently drifting */
+.mesh {
+  color: #fff;
+  background:
+    radial-gradient(60% 90% at 15% 20%, #ff7ac6 0%, transparent 60%),
+    radial-gradient(60% 90% at 85% 15%, #ffb36b 0%, transparent 60%),
+    radial-gradient(70% 100% at 60% 100%, #7b6bff 0%, transparent 65%),
+    #ff8fb1;
+  background-size: 160% 160%;
+  animation: mesh-drift 8s ease-in-out infinite alternate;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset, 0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 8px 22px -6px rgba(214, 74, 160, 0.55), 0 2px 4px rgba(17, 17, 19, 0.08);
+  text-shadow: 0 1px 1px rgba(120, 30, 90, 0.25);
+}
+@keyframes mesh-drift {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
+}
+
+/* Fallback glass (non-Chromium browsers and the admin panel) */
 .glass {
-  background: var(--glass);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 10px 30px -10px rgba(17, 17, 19, 0.18), 0 0 0 1px rgba(17, 17, 19, 0.05);
+}
+
+.font-display {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -83,4 +155,4 @@ body {
 }
 
 html { scroll-behavior: smooth; }
-::selection { background: rgba(10, 132, 255, 0.2); }
+::selection { background: rgba(59, 108, 246, 0.18); }
