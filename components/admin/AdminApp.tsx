@@ -52,7 +52,8 @@ export function AdminApp() {
           <Centered key="forbidden">
             <h1 className="text-2xl font-semibold tracking-tight">Sin permisos</h1>
             <p className="mt-2 text-muted">
-              La cuenta {session?.user.email} existe, pero aún no está autorizada para editar el sitio.
+              La cuenta {session?.user.email} existe, pero aún no está autorizada para editar el sitio. Pide que
+              la autoricen y vuelve a entrar.
             </p>
             <Button className="mt-6" onClick={signOut}>
               Cerrar sesión
@@ -79,18 +80,40 @@ function Centered({ children }: { children: React.ReactNode }) {
 }
 
 function Login() {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [created, setCreated] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError("");
-    const { error } = await getBrowserClient().auth.signInWithPassword({ email, password });
+    const auth = getBrowserClient().auth;
+    if (mode === "signin") {
+      const { error } = await auth.signInWithPassword({ email, password });
+      if (error) setError("Correo o contraseña incorrectos.");
+    } else {
+      // Signups are closed in the database once the first admin exists
+      const { data, error } = await auth.signUp({ email, password });
+      if (error) setError(error.message.includes("Password") ? "La contraseña debe tener al menos 6 caracteres." : "El registro está cerrado.");
+      else if (!data.session) setCreated(true);
+    }
     setBusy(false);
-    if (error) setError("Correo o contraseña incorrectos.");
+  }
+
+  if (created) {
+    return (
+      <Centered>
+        <h1 className="text-2xl font-semibold tracking-tight">Cuenta creada</h1>
+        <p className="mt-2 text-muted">Falta activarla y darle permisos. Cuando esté lista, entra con este correo y contraseña.</p>
+        <Button className="mt-6" onClick={() => (setCreated(false), setMode("signin"))}>
+          Ir a iniciar sesión
+        </Button>
+      </Centered>
+    );
   }
 
   return (
@@ -99,7 +122,9 @@ function Login() {
         JY
       </span>
       <h1 className="mt-5 text-2xl font-semibold tracking-tight">Panel del portafolio</h1>
-      <p className="mt-1 text-sm text-muted">Inicia sesión para editar tu sitio.</p>
+      <p className="mt-1 text-sm text-muted">
+        {mode === "signin" ? "Inicia sesión para editar tu sitio." : "Elige el correo y la contraseña con que entrarás."}
+      </p>
       <form onSubmit={submit} className="mt-8 space-y-4 text-left">
         <label className="block">
           <Label>Correo</Label>
@@ -117,7 +142,8 @@ function Login() {
           <input
             type="password"
             required
-            autoComplete="current-password"
+            minLength={6}
+            autoComplete={mode === "signin" ? "current-password" : "new-password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={inputClass}
@@ -136,9 +162,19 @@ function Login() {
           )}
         </AnimatePresence>
         <Button type="submit" disabled={busy} className="w-full">
-          {busy ? "Entrando…" : "Entrar"}
+          {busy ? "Un momento…" : mode === "signin" ? "Entrar" : "Crear cuenta"}
         </Button>
       </form>
+      <button
+        type="button"
+        onClick={() => {
+          setMode(mode === "signin" ? "signup" : "signin");
+          setError("");
+        }}
+        className="mt-5 text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
+      >
+        {mode === "signin" ? "¿Primera vez? Crear cuenta" : "Ya tengo cuenta"}
+      </button>
     </Centered>
   );
 }
