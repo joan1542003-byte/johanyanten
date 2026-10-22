@@ -1,13 +1,14 @@
 "use client";
 
 import { ViewTransition, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import type { Category, Img } from "@/lib/content";
 import { calm, ease } from "@/lib/motion";
 import { categorySky, skyBackground } from "@/lib/skies";
 import { Head } from "./Mark";
+import { Icon } from "./Icon";
+import { AsciiImage } from "./ascii/AsciiImage";
 
 export type CardData = {
   slug: string;
@@ -26,6 +27,9 @@ type Props = {
 
 const filterOrder = ["all", "branding", "info", "uxui", "data", "motion"] as const;
 
+// Bento rhythm: one wide card, then two side by side, and again
+const isWide = (i: number) => i % 3 === 0;
+
 export function WorkGrid({ lang, projects, labels }: Props) {
   const [filter, setFilter] = useState<(typeof filterOrder)[number]>("all");
   const visible = filter === "all" ? projects : projects.filter((p) => p.categories.includes(filter));
@@ -39,19 +43,13 @@ export function WorkGrid({ lang, projects, labels }: Props) {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`relative inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-300 ${
+              className={`t-label relative inline-flex h-10 items-center gap-2 rounded-full px-4 transition-colors duration-500 ${
                 filter === f ? "text-white" : "chip text-ink hover:bg-paper"
               }`}
             >
-              {filter === f && (
-                <motion.span layoutId="filter-pill" transition={calm} className="absolute inset-0 rounded-full bg-ink" />
-              )}
+              {filter === f && <motion.span layoutId="filter-pill" transition={calm} className="pill-ink absolute inset-0 rounded-full" />}
               {f !== "all" && (
-                <span
-                  aria-hidden
-                  className="relative h-3 w-3 rounded-[4px]"
-                  style={{ background: skyBackground(categorySky[f]) }}
-                />
+                <span aria-hidden className="relative h-3.5 w-3.5 rounded-[5px]" style={{ background: skyBackground(categorySky[f]) }} />
               )}
               <span className="relative">{labels.filters[f]}</span>
             </button>
@@ -59,19 +57,19 @@ export function WorkGrid({ lang, projects, labels }: Props) {
         </div>
       </Head>
 
-      <motion.div layout className="grid gap-x-5 gap-y-9 sm:grid-cols-2">
+      <motion.div layout transition={calm} className="grid gap-x-5 gap-y-10 sm:grid-cols-2">
         <AnimatePresence mode="popLayout" initial={false}>
           {visible.map((p, i) => (
             <motion.div
               key={p.slug}
               layout
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.8, ease }}
-              className={i === 0 ? "sm:col-span-2" : ""}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0, transition: { duration: 0.9, ease, delay: 0.08 * (i % 3) } }}
+              exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.5, ease } }}
+              transition={calm}
+              className={isWide(i) ? "sm:col-span-2" : ""}
             >
-              <ProjectCard lang={lang} project={p} wide={i === 0} labels={labels} />
+              <ProjectCard lang={lang} project={p} wide={isWide(i)} labels={labels} />
             </motion.div>
           ))}
         </AnimatePresence>
@@ -94,42 +92,47 @@ function ProjectCard({
   return (
     <Link href={`/${lang}/work/${project.slug}`} transitionTypes={["nav-forward"]} className="group block">
       <div
-        className={`relative overflow-hidden rounded-[28px] bg-stone shadow-[0_1px_2px_rgba(30,22,12,0.05)] transition-[transform,box-shadow] duration-500 ease-out group-hover:-translate-y-1 group-hover:shadow-[var(--shadow-lift)] ${
-          wide ? "aspect-[16/9]" : "aspect-[4/3]"
+        className={`relative overflow-hidden rounded-[28px] shadow-[0_1px_2px_rgba(30,22,12,0.06)] transition-[transform,box-shadow] duration-700 ease-out group-hover:-translate-y-1.5 group-hover:shadow-[var(--shadow-lift)] ${
+          wide ? "aspect-[4/3] sm:aspect-[2.2/1]" : "aspect-[4/3]"
         }`}
       >
         <ViewTransition name={`cover-${project.slug}`} share="morph" default="none">
-          <Image
-            src={project.cover.src}
-            alt={project.title}
-            fill
-            preload={wide}
-            sizes={wide ? "(min-width: 1240px) 1130px, 100vw" : "(min-width: 640px) 560px, 100vw"}
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
+          <div className="absolute inset-0 transition-transform duration-[1200ms] ease-out group-hover:scale-[1.035]">
+            <AsciiImage
+              src={project.cover.src}
+              alt={project.title}
+              preload={wide}
+              sizes={wide ? "(min-width: 1240px) 1130px, 100vw" : "(min-width: 640px) 560px, 100vw"}
+              className="object-cover"
+            />
+          </div>
         </ViewTransition>
-        <div className="absolute inset-x-3 bottom-3 flex flex-wrap gap-1.5">
+        <div className="absolute inset-x-3.5 bottom-3.5 flex flex-wrap gap-1.5">
           {project.categories.map((c) => (
             <span key={c} className="cap">
-              <span aria-hidden className="h-2.5 w-2.5 rounded-[3px]" style={{ background: skyBackground(categorySky[c]) }} />
+              <span aria-hidden className="h-3 w-3 rounded-[4px]" style={{ background: skyBackground(categorySky[c]) }} />
               {labels.filters[c]}
             </span>
           ))}
         </div>
-        {project.isNew && <span className="cap absolute top-3 left-3 !bg-ink !text-white">{labels.new}</span>}
+        {project.isNew && (
+          <span className="cap absolute top-3.5 left-3.5 !text-white" style={{ background: "linear-gradient(180deg,#34312e,#141312)" }}>
+            {labels.new}
+          </span>
+        )}
       </div>
-      <div className="flex items-start justify-between gap-4 px-1.5 pt-4">
+      <div className="flex items-start justify-between gap-4 px-1.5 pt-5">
         <div>
-          <h3 className="text-lg leading-snug font-semibold">{project.title}</h3>
-          <p className="mt-0.5 text-[15px] text-soft">{project.tagline}</p>
+          <h3 className={`leading-snug font-semibold tracking-[-0.02em] ${wide ? "text-[clamp(21px,1.9vw,26px)]" : "text-[20px]"}`}>
+            {project.title}
+          </h3>
+          <p className="t-small mt-1 text-soft">{project.tagline}</p>
         </div>
         <span
           aria-hidden
-          className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-[0_1px_2px_rgba(30,22,12,0.1)] transition-[transform,background-color,color] duration-500 group-hover:bg-ink group-hover:text-white"
+          className="card mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[transform,background,color] duration-700 ease-out group-hover:translate-x-1 group-hover:[background:linear-gradient(180deg,#34312e,#141312)] group-hover:text-white"
         >
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M4.5 12h15M14 6.5l5.5 5.5-5.5 5.5" />
-          </svg>
+          <Icon name="arrow" />
         </span>
       </div>
     </Link>

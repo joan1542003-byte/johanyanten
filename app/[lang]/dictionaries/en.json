@@ -18,7 +18,8 @@
       "tools": "Tools",
       "about": "About",
       "contact": "Contact"
-    }
+    },
+    "portrait": "Hover over the portrait"
   },
   "work": {
     "eyebrow": "Work",
@@ -69,7 +70,8 @@
   },
   "footer": "Designed and built by Johan Yanten.",
   "contact": {
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "ascii": "LET’S TALK"
   },
   "top": "Back to top"
 }

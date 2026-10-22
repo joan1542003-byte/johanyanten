@@ -66,7 +66,7 @@ export function Nav({ lang, labels, glass }: Props) {
               key={s}
               href={`/${lang}#${s}`}
               onMouseEnter={() => setHovered(s)}
-              className={`relative rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
+              className={`relative rounded-full px-4 py-2 t-label transition-colors duration-500 ${
                 highlighted === s ? "text-white" : "text-ink/70"
               }`}
             >
@@ -88,7 +88,7 @@ export function Nav({ lang, labels, glass }: Props) {
 
 function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string }) {
   return (
-    <Link href={href} className="ml-1 inline-flex rounded-full bg-white/70 p-0.5 text-xs font-semibold">
+    <Link href={href} className="ml-1 inline-flex rounded-full bg-white/70 p-0.5 text-[13px] font-semibold">
       <span className="sr-only">{lang === "es" ? "Cambiar idioma:" : "Switch language:"}</span>
       {["es", "en"].map((l) => (
         <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-white" : "text-ink/60"}`}>
@@ -177,7 +177,7 @@ function MobileMenu({
                 <motion.div
                   key={s}
                   variants={{
-                    hidden: { opacity: 0, y: 10, transition: { duration: 0.25, ease } },
+                    hidden: { opacity: 0, y: 10, transition: { duration: 0.4, ease } },
                     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease } },
                   }}
                 >

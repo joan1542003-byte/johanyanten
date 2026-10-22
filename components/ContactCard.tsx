@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { ease } from "@/lib/motion";
 import { MagneticButton } from "./amicro/magnetic-button";
+import { Icon } from "./Icon";
 
 // Primary ink button to the chat, plus the handle as a pill that copies itself
 export function ContactActions({ href, cta, handle, copied }: { href: string; cta: string; handle: string; copied: string }) {
@@ -29,15 +30,15 @@ export function ContactActions({ href, cta, handle, copied }: { href: string; ct
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => trigger("light")}
-        className="pill-ink h-12 rounded-full px-6 text-[15px] font-semibold"
+        className="pill-ink h-12 gap-2 rounded-full px-6 text-[16px] font-semibold"
       >
-        {cta} <span aria-hidden>↗</span>
+        <Icon name="sparkle" /> {cta} <Icon name="external" className="h-4 w-4" />
       </MagneticButton>
       {handle && (
         <button
           type="button"
           onClick={copy}
-          className="pill-white relative inline-flex h-12 min-w-44 items-center justify-center overflow-hidden rounded-full px-6 text-[15px] font-semibold"
+          className="pill-white relative inline-flex h-12 min-w-44 items-center justify-center overflow-hidden rounded-full px-6 text-[16px] font-semibold"
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
@@ -45,9 +46,12 @@ export function ContactActions({ href, cta, handle, copied }: { href: string; ct
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease }}
+              transition={{ duration: 0.55, ease }}
             >
-              {done ? `✓ ${copied}` : handle}
+              <span className="inline-flex items-center gap-2">
+                <Icon name={done ? "check" : "copy"} className="h-4 w-4" />
+                {done ? copied : handle}
+              </span>
             </motion.span>
           </AnimatePresence>
         </button>

@@ -18,7 +18,8 @@
       "tools": "Herramientas",
       "about": "Sobre mí",
       "contact": "Contacto"
-    }
+    },
+    "portrait": "Pasa el cursor por el retrato"
   },
   "work": {
     "eyebrow": "Proyectos",
@@ -69,7 +70,8 @@
   },
   "footer": "Diseñado y construido por Johan Yanten.",
   "contact": {
-    "copied": "¡Copiado!"
+    "copied": "¡Copiado!",
+    "ascii": "HABLEMOS"
   },
   "top": "Volver arriba"
 }

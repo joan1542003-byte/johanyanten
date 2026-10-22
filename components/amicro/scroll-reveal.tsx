@@ -15,7 +15,7 @@ interface ScrollRevealProps {
 
 export function ScrollReveal({
   children,
-  duration = 1,
+  duration = 1.1,
   yOffset = 30,
   xOffset = 0,
   scale = 0.95,
@@ -25,7 +25,7 @@ export function ScrollReveal({
     <motion.div
       initial={{ opacity: 0, y: yOffset, x: xOffset, scale }}
       whileInView={{ opacity: 1, y: 0, x: 0, scale: 1 }}
-      viewport={{ once: true, margin: '-15%' }}
+      viewport={{ once: true, margin: '0px 0px -8% 0px' }}
       transition={{
         duration,
         ease,

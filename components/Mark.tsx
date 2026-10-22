@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 import { ScrollReveal } from "./amicro/scroll-reveal";
 
-// Two-tone text, as in Relevo: *the part in asterisks* takes the soft gray second tone
+// Two-tone text, as in Relevo: *the part in asterisks* takes the deep pastel gradient
 export function Tone({ text }: { text: string }) {
   return text.split(/(\*[^*]+\*)/g).map((part, i) =>
     part.startsWith("*") && part.endsWith("*") ? (
-      <span key={i} className="text-mute">
+      <span key={i} className="tone">
         {part.slice(1, -1)}
       </span>
     ) : (
@@ -14,7 +14,7 @@ export function Tone({ text }: { text: string }) {
   );
 }
 
-// Section header: small label, two-tone title, optional lead and controls on the side
+// Section header: label, two-tone title, optional lead and controls on the side
 export function Head({
   eyebrow,
   title,
@@ -27,13 +27,13 @@ export function Head({
   children?: ReactNode;
 }) {
   return (
-    <ScrollReveal scale={1} yOffset={18} className="mb-8 flex flex-wrap items-end justify-between gap-6 sm:mb-10">
-      <div className="grid max-w-[66ch] gap-2">
-        <span className="text-[13px] font-semibold text-soft">{eyebrow}</span>
-        <h2 className="text-[clamp(28px,3.6vw,44px)] leading-[1.04] font-semibold">
+    <ScrollReveal scale={1} yOffset={20} className="mb-9 flex flex-wrap items-end justify-between gap-6 sm:mb-11">
+      <div className="grid max-w-[64ch] gap-2.5">
+        <span className="t-label text-soft">{eyebrow}</span>
+        <h2 className="t-h2">
           <Tone text={title} />
         </h2>
-        {lead && <p className="mt-1 text-[17px] text-soft">{lead}</p>}
+        {lead && <p className="t-lead mt-1 text-soft">{lead}</p>}
       </div>
       {children}
     </ScrollReveal>

@@ -11,6 +11,8 @@ import { Tone } from "@/components/Mark";
 import { FadeUp } from "@/components/amicro/fade-up";
 import { ScrollReveal } from "@/components/amicro/scroll-reveal";
 import { ProgressIndicator } from "@/components/amicro/progress-indicator";
+import { AsciiImage } from "@/components/ascii/AsciiImage";
+import { Icon } from "@/components/Icon";
 
 export async function generateStaticParams() {
   const projects = await getProjects();
@@ -51,26 +53,26 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
   return (
     <PageTransition>
       <ProgressIndicator height={3} color="bg-ink" />
-      <main className="grid gap-5 sm:gap-7">
+      <main className="grid grid-cols-[minmax(0,1fr)] gap-5 sm:gap-7">
         <header className="board board-white">
           <FadeUp className="flex flex-wrap items-center gap-2">
             <Link
               href={`/${lang}#work`}
               transitionTypes={["nav-back"]}
-              className="chip inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors hover:bg-paper"
+              className="chip t-label inline-flex h-10 items-center gap-1.5 rounded-full px-4 transition-colors duration-500 hover:bg-paper"
             >
-              <span aria-hidden>←</span> {dict.project.back}
+              <Icon name="back" className="h-4 w-4" /> {dict.project.back}
             </Link>
             {project.categories.map((c) => (
-              <span key={c} className="chip inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium">
-                <span aria-hidden className="h-3 w-3 rounded-[4px]" style={{ background: skyBackground(categorySky[c]) }} />
+              <span key={c} className="chip t-label inline-flex h-10 items-center gap-2 rounded-full px-4">
+                <span aria-hidden className="h-3.5 w-3.5 rounded-[5px]" style={{ background: skyBackground(categorySky[c]) }} />
                 {dict.work.filters[c]}
               </span>
             ))}
           </FadeUp>
           <FadeUp delay={0.15}>
-            <h1 className="mt-6 max-w-[20ch] text-[clamp(36px,5.6vw,72px)] leading-[1] font-semibold tracking-[-0.04em]">
-              {project.title[lang]} <span className="text-mute">{project.tagline[lang]}</span>
+            <h1 className="t-h1 mt-6 max-w-[22ch]">
+              {project.title[lang]} <span className="tone">{project.tagline[lang]}</span>
             </h1>
           </FadeUp>
           <FadeUp delay={0.3} duration={1.2} className="mt-8 sm:mt-10">
@@ -83,7 +85,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
                   height={project.cover.h}
                   sizes="(min-width: 1240px) 1130px, 100vw"
                   preload
-                  className="max-h-[78svh] w-full object-cover"
+                  className="max-h-[70svh] w-full object-cover"
                 />
               </ViewTransition>
             </div>
@@ -94,12 +96,12 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
           <section className="board">
             <div className="grid gap-6 md:grid-cols-[minmax(0,0.5fr)_minmax(0,1fr)] md:gap-12">
               <ScrollReveal scale={1} yOffset={16}>
-                <span className="text-[13px] font-semibold text-soft">{dict.project.about}</span>
+                <span className="t-label text-soft">{dict.project.about}</span>
               </ScrollReveal>
               <div className="grid gap-5">
                 {paragraphs.map((p, i) => (
                   <ScrollReveal key={i} scale={1} yOffset={16}>
-                    <p className="text-[clamp(19px,2vw,24px)] leading-[1.45] font-medium tracking-[-0.01em] text-pretty">
+                    <p className="text-[clamp(20px,1.9vw,25px)] leading-[1.5] font-medium tracking-[-0.012em] text-pretty">
                       <Tone text={p} />
                     </p>
                   </ScrollReveal>
@@ -112,7 +114,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
         {project.youtube && (
           <ScrollReveal scale={1} yOffset={18}>
             <section className="board board-white">
-              <span className="text-[13px] font-semibold text-soft">{dict.project.video}</span>
+              <span className="t-label text-soft">{dict.project.video}</span>
               <div className="mt-5 overflow-hidden rounded-[24px] bg-stone">
                 <iframe
                   className="aspect-video w-full"
@@ -129,20 +131,18 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
 
         {project.gallery.length > 0 && (
           <section className="board board-white">
-            <span className="text-[13px] font-semibold text-soft">{dict.project.gallery}</span>
+            <span className="t-label text-soft">{dict.project.gallery}</span>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 sm:gap-4">
               {project.gallery.map((img, i) => {
                 const wide = img.w / img.h > 1.5;
                 return (
                   <ScrollReveal key={img.src} scale={1} yOffset={18} className={wide ? "sm:col-span-2" : ""}>
-                    <div className="overflow-hidden rounded-[22px] bg-stone">
-                      <Image
+                    <div className="relative overflow-hidden rounded-[22px]" style={{ aspectRatio: `${img.w} / ${img.h}` }}>
+                      <AsciiImage
                         src={img.src}
                         alt={`${project.title[lang]} — ${i + 1}`}
-                        width={img.w}
-                        height={img.h}
                         sizes={wide ? "(min-width: 1240px) 1130px, 100vw" : "(min-width: 640px) 560px, 100vw"}
-                        className="w-full"
+                        className="object-cover"
                       />
                     </div>
                   </ScrollReveal>
@@ -170,12 +170,12 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
               </ViewTransition>
             </div>
             <div>
-              <span className="text-[13px] font-semibold text-soft">{dict.project.next}</span>
-              <p className="mt-2 text-[clamp(28px,3.6vw,44px)] leading-[1.04] font-semibold tracking-[-0.025em]">
-                {next.title[lang]} <span className="text-mute">{next.tagline[lang]}</span>
+              <span className="t-label text-soft">{dict.project.next}</span>
+              <p className="t-h2 mt-2">
+                {next.title[lang]} <span className="tone">{next.tagline[lang]}</span>
               </p>
-              <span className="pill-ink mt-6 inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-semibold transition-transform duration-500 group-hover:translate-x-1">
-                {dict.project.next} <span aria-hidden>→</span>
+              <span className="pill-ink t-label mt-6 inline-flex h-12 items-center gap-2 rounded-full px-6 transition-transform duration-700 ease-out group-hover:translate-x-1">
+                {dict.project.next} <Icon name="arrow" className="h-4 w-4" />
               </span>
             </div>
           </Link>

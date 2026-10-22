@@ -14,17 +14,20 @@ interface BlurTextProps {
   className?: string;
   /** Class applied to *marked* segments of the text */
   markClassName?: string;
+  /** Color per word from its position (0–1) in the line: a gradient that survives the animation */
+  tint?: (t: number) => string;
 }
 
 // Adapted from amicro's blur-text: reveals word by word, rising softly, with only a hint of blur
 export function BlurText({
   text,
-  duration = 1,
-  staggerDelay = 0.06,
+  duration = 1.1,
+  staggerDelay = 0.07,
   initialBlur = '2px',
   delay = 0,
   className = '',
   markClassName = '',
+  tint,
 }: BlurTextProps) {
   const containerVariants = {
     hidden: {},
@@ -38,7 +41,9 @@ export function BlurText({
 
   // Words keep together so lines never break mid-word; *segments* get markClassName
   const segments = text.split(/(\*[^*]+\*)/g).filter(Boolean);
+  const total = text.replace(/\*/g, '').trim().split(/\s+/).length;
   let key = 0;
+  let index = 0;
 
   return (
     <motion.span
@@ -59,6 +64,7 @@ export function BlurText({
             <motion.span
               key={key++}
               variants={wordVariants}
+              style={tint ? { color: tint(index++ / Math.max(1, total - 1)) } : undefined}
               className={`inline-block whitespace-nowrap ${marked ? markClassName : ''}`}
             >
               {word}

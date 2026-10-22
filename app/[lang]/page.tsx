@@ -34,15 +34,15 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   return (
     <PageTransition>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
-      <main className="grid gap-5 sm:gap-7">
+      <main className="grid grid-cols-[minmax(0,1fr)] gap-5 sm:gap-7">
         <Hero {...content.hero[lang]} labels={dict.hero} />
         <section id="work" className="board board-white scroll-mt-24">
           <WorkGrid lang={lang} projects={cards} labels={dict.work} />
         </section>
         <Disciplines {...dict.disciplines} names={dict.work.filters} />
-        <Tools {...dict.tools} />
+        <Tools {...dict.tools} glass={content.glass} />
         <About {...content.about[lang]} />
-        <Contact {...content.contact[lang]} copied={dict.contact.copied} />
+        <Contact {...content.contact[lang]} copied={dict.contact.copied} ascii={dict.contact.ascii} />
       </main>
     </PageTransition>
   );

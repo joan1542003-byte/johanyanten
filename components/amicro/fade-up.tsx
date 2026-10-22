@@ -14,7 +14,7 @@ interface FadeUpProps {
 
 export function FadeUp({
   children,
-  duration = 1,
+  duration = 1.1,
   delay = 0,
   yOffset = 20,
   className = '',
