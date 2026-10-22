@@ -6,11 +6,18 @@ import { Head, Tone } from "./Mark";
 import { Sky } from "./Sky";
 import { ContactActions } from "./ContactCard";
 import { Dock } from "./Dock";
-import { AsciiImage } from "./ascii/AsciiImage";
+import { Art, type ArtName } from "./ascii/Art";
 import { AsciiWord } from "./ascii/AsciiWord";
 import { Icon } from "./Icon";
 
 const disciplines: Category[] = ["branding", "info", "uxui", "data", "motion"];
+const disciplineArt: Record<Category, ArtName> = {
+  branding: "nib",
+  info: "signpost",
+  uxui: "browser",
+  data: "chart",
+  motion: "film",
+};
 
 export function Disciplines({
   eyebrow,
@@ -36,7 +43,11 @@ export function Disciplines({
                   i === 4 ? "aspect-[2.1/1] sm:aspect-square" : "aspect-square"
                 }`}
               >
-                <span className="cap">{names[c]}</span>
+                <Art
+                  name={disciplineArt[c]}
+                  className="pointer-events-none absolute inset-0 m-auto h-fit w-fit pb-12 text-[11px] text-white [text-shadow:0_1px_6px_rgba(20,19,18,0.35)] sm:text-[12px]"
+                />
+                <span className="cap relative">{names[c]}</span>
               </Sky>
               <p className="t-small mt-3.5 px-1.5 text-soft">{items[c]}</p>
             </div>
@@ -97,9 +108,12 @@ export function About({ eyebrow, title, body }: AboutContent) {
             ))}
         </div>
         <ScrollReveal scale={1} yOffset={20} className="order-first md:order-none">
-          <div className="card p-2.5">
-            <div className="relative aspect-[1232/940] overflow-hidden rounded-[16px]">
-              <AsciiImage src="/about/portrait.png" alt="Johan Yanten" sizes="(min-width: 768px) 480px, 100vw" className="object-cover" />
+          <div className="card overflow-hidden p-2.5">
+            <div
+              className="grid place-items-center overflow-hidden rounded-[16px] px-3 py-8 sm:py-10"
+              style={{ background: "radial-gradient(70% 60% at 30% 20%, #fff3d6, transparent 70%), linear-gradient(160deg, #f7f1ea, #efe6f6)" }}
+            >
+              <Art name="desk" interval={140} className="tone text-[clamp(8px,2.6vw,12.5px)] lg:text-[clamp(8px,1.05vw,12.5px)] font-semibold" />
             </div>
           </div>
         </ScrollReveal>

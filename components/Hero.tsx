@@ -5,11 +5,11 @@ import { Aura } from "./Aura";
 import { BlurText } from "./amicro/blur-text";
 import { FadeUp } from "./amicro/fade-up";
 import { MagneticButton } from "./amicro/magnetic-button";
-import { AsciiPortrait } from "./ascii/AsciiPortrait";
+import { AsciiObject } from "./ascii/AsciiObject";
 import { Icon } from "./Icon";
 
 type Props = HeroContent & {
-  labels: { contact: string; work: string; portrait: string; toc: Record<string, string> };
+  labels: { contact: string; work: string; object: string; objectLabel: string; toc: Record<string, string> };
 };
 
 // Deep pastel gradient across the second half of the headline (readable at 3:1+ on paper)
@@ -25,7 +25,7 @@ const tone = (t: number) => {
   return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(",")})`;
 };
 
-// Aura board: name and two-tone line on the left, the portrait in ASCII on the right
+// Aura board: name and two-tone line on the left, a 3D object drawn in ASCII on the right
 export function Hero({ eyebrow, title, subtitle, labels }: Props) {
   return (
     <header className="relative overflow-hidden rounded-[40px] p-[clamp(22px,4.5vw,60px)]">
@@ -79,10 +79,10 @@ export function Hero({ eyebrow, title, subtitle, labels }: Props) {
               className="aspect-[4/4.4] overflow-hidden rounded-[22px]"
               style={{ background: "radial-gradient(90% 70% at 50% 35%, #fffdf9 0%, #f4eee6 100%)" }}
             >
-              <AsciiPortrait src="/about/portrait.png" label="Johan Yanten" />
+              <AsciiObject shape="torus" label={labels.objectLabel} />
             </div>
             <p className="t-label mt-3 flex items-center justify-between px-1.5 text-ink/60">
-              <span>{labels.portrait}</span>
+              <span>{labels.object}</span>
               <span className="font-mono text-[13px]">ascii</span>
             </p>
           </div>

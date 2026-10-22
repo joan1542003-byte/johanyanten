@@ -41,7 +41,7 @@ export function Nav({ lang, labels, glass }: Props) {
     return () => io.disconnect();
   }, [isHome]);
 
-  const current = isHome ? active : "work";
+  const current = isHome ? active : pathname.includes("/work/") ? "work" : null;
   const highlighted = hovered ?? current;
 
   return (

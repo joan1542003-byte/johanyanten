@@ -1,5 +1,6 @@
 "use client";
 
+import { Safe } from "@/components/Safe";
 import { useEffect, useRef } from "react";
 
 // The aura of Relevo: five soft color blobs drifting slowly over paper, with live grain.
@@ -34,7 +35,7 @@ const MODES = { hero: [1, 1.1, 1], soft: [0.85, 0.75, 0.6] } as const;
 const FALLBACK =
   "radial-gradient(30% 34% at 40% 62%, #FFD54A, transparent 70%), radial-gradient(28% 30% at 58% 38%, #F6A3CB, transparent 72%), radial-gradient(30% 30% at 32% 40%, #9DD6F4, transparent 72%), radial-gradient(26% 28% at 66% 60%, #C5B2F6, transparent 72%), #F7F4F0";
 
-export function Aura({ mode = "hero", className = "" }: { mode?: keyof typeof MODES; className?: string }) {
+function AuraCanvas({ mode = "hero", className = "" }: { mode?: keyof typeof MODES; className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -114,4 +115,13 @@ export function Aura({ mode = "hero", className = "" }: { mode?: keyof typeof MO
   }, [mode]);
 
   return <canvas ref={ref} aria-hidden className={`absolute inset-0 h-full w-full ${className}`} />;
+}
+
+// Wrapped so a failure here can never break the page
+export function Aura(props: Parameters<typeof AuraCanvas>[0]) {
+  return (
+    <Safe>
+      <AuraCanvas {...props} />
+    </Safe>
+  );
 }

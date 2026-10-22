@@ -221,6 +221,11 @@ h3 {
   to { translate: 0; }
 }
 
+/* Endless ticker band: moves exactly one copy of its content */
+@keyframes ticker {
+  to { transform: translateX(-50%); }
+}
+
 /* Moving backdrop for the glass preview in /admin (180px = 10 stripe periods) */
 @keyframes stripes {
   to { transform: translateX(180px); }

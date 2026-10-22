@@ -3,67 +3,83 @@
 import Image, { type ImageProps } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
-import { CELL_RATIO, MONO, fitCanvas, imageToCells, loadImage, randomGlyph, sampleUrl } from "@/lib/ascii";
+import { CELL_RATIO, MONO, RAMP, auraColor, fitCanvas, randomGlyph } from "@/lib/ascii";
 
-const CHAR_W = 7;
-const SETTLE_MS = 1300;
+const CHAR_W = 8;
+const WIPE_MS = 1150;
 
 /**
- * Image that first appears as colored ASCII, resolving from noise top to bottom,
- * then dissolves into the real photo. Must sit in a positioned box (uses `fill`).
+ * Image that waits behind a field of shimmering characters, then is uncovered by a
+ * diagonal wipe whose leading edge is dense ASCII. The characters are generated,
+ * not taken from the image. Must sit in a positioned box (uses `fill`).
  */
-export function AsciiImage({ className = "", alt, src, ...props }: Omit<ImageProps, "fill" | "onLoad"> & { alt: string; src: string }) {
+export function AsciiImage({ className = "", alt, ...props }: Omit<ImageProps, "fill" | "onLoad"> & { alt: string }) {
   const box = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const inView = useInView(box, { once: true, margin: "120px 0px" });
+  const inView = useInView(box, { once: true, margin: "100px 0px" });
   const reduced = useReducedMotion();
   const [loaded, setLoaded] = useState(false);
-  const [settled, setSettled] = useState(false);
+  const [done, setDone] = useState(false);
+  // The photo stays hidden until the character field has covered it, so it never flashes
+  const [covered, setCovered] = useState(false);
+
+  // Safety net: if animation frames are paused (background tab), show the photo anyway
+  useEffect(() => {
+    if (!loaded || done) return;
+    const t = setTimeout(() => setDone(true), WIPE_MS + 2500);
+    return () => clearTimeout(t);
+  }, [loaded, done]);
 
   useEffect(() => {
-    if (!inView || reduced || !canvas.current) return;
+    if (!inView || reduced || done || !canvas.current) return;
     const el = canvas.current;
+    const { ctx, w, h } = fitCanvas(el);
+    const lineH = CHAR_W / CELL_RATIO;
+    const cols = Math.ceil(w / CHAR_W);
+    const rows = Math.ceil(h / lineH);
+    // Each cell's place along the diagonal, with a little jitter so the edge feels hand-made
+    const order = Float32Array.from({ length: cols * rows }, (_, i) => {
+      const x = i % cols;
+      const y = Math.floor(i / cols);
+      return (x / cols) * 0.65 + (y / rows) * 0.35 + Math.random() * 0.08;
+    });
+    ctx.font = `${CHAR_W * 1.55}px ${MONO}`;
+    ctx.textBaseline = "top";
     let frame = 0;
-    let cancelled = false;
+    let start = 0;
+    let last = 0;
 
-    loadImage(sampleUrl(src))
-      .then((img) => {
-        if (cancelled) return;
-        const { ctx, w, h } = fitCanvas(el);
-        const lineH = CHAR_W / CELL_RATIO;
-        const cols = Math.ceil(w / CHAR_W);
-        const rows = Math.ceil(h / lineH);
-        const cells = imageToCells(img, cols, rows);
-        // Each cell settles at its own moment, in a soft wave from the top
-        const at = cells.map((_, i) => (Math.floor(i / cols) / rows) * SETTLE_MS * 0.6 + Math.random() * SETTLE_MS * 0.4);
-        ctx.font = `${CHAR_W * 1.6}px ${MONO}`;
-        ctx.textBaseline = "top";
-        const start = performance.now();
-
-        const draw = (now: number) => {
-          const t = now - start;
-          ctx.clearRect(0, 0, w, h);
-          for (let i = 0; i < cells.length; i++) {
-            const c = cells[i];
-            const done = t >= at[i];
-            if (!done && t < at[i] - 500) continue;
-            ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},${done ? c.a : c.a * 0.45})`;
-            ctx.fillText(done ? c.ch : randomGlyph(), (i % cols) * CHAR_W, Math.floor(i / cols) * lineH);
-          }
-          if (t < SETTLE_MS + 150) frame = requestAnimationFrame(draw);
-          else setSettled(true);
-        };
-        frame = requestAnimationFrame(draw);
-      })
-      .catch(() => setSettled(true));
-
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(frame);
+    const draw = (now: number) => {
+      frame = requestAnimationFrame(draw);
+      if (now - last < 40) return;
+      last = now;
+      if (loaded && !start) start = now;
+      const p = start ? (now - start) / WIPE_MS : 0;
+      const edge = p * 1.15 - 0.08;
+      ctx.clearRect(0, 0, w, h);
+      if (!covered) setCovered(true);
+      for (let i = 0; i < order.length; i++) {
+        const d = order[i] - edge;
+        if (d < 0) continue; // uncovered
+        const x = (i % cols) * CHAR_W;
+        const y = Math.floor(i / cols) * lineH;
+        ctx.fillStyle = "rgba(247,244,240,0.96)";
+        ctx.fillRect(x, y, CHAR_W, lineH);
+        const near = d < 0.1;
+        const shimmer = !near && Math.random() < 0.08;
+        if (!near && !shimmer && (i + Math.floor(now / 220)) % 7 !== 0) continue;
+        const [r, g, b] = auraColor((i % cols) / cols);
+        ctx.fillStyle = `rgba(${r},${g},${b},${near ? 0.95 : 0.35})`;
+        ctx.fillText(near ? RAMP[RAMP.length - 1 - Math.floor((d / 0.1) * 6)] : randomGlyph(), x, y);
+      }
+      if (start && p >= 1.05) {
+        cancelAnimationFrame(frame);
+        setDone(true);
+      }
     };
-  }, [inView, reduced, src]);
-
-  const reveal = loaded && (settled || reduced);
+    frame = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(frame);
+  }, [inView, reduced, loaded, done, covered]);
 
   return (
     <div
@@ -73,19 +89,15 @@ export function AsciiImage({ className = "", alt, src, ...props }: Omit<ImagePro
     >
       <Image
         {...props}
-        src={src}
         alt={alt}
         fill
         onLoad={() => setLoaded(true)}
-        className={`${className} transition-opacity duration-[1100ms] ease-out ${reveal ? "opacity-100" : "opacity-0"}`}
+        onError={() => setLoaded(true)}
+        className={`${className} ${covered || done || reduced ? "" : "opacity-0"}`}
       />
-      <canvas
-        ref={canvas}
-        aria-hidden
-        className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-[1100ms] ease-out ${
-          reveal ? "opacity-0" : "opacity-100"
-        }`}
-      />
+      {!done && !reduced && (
+        <canvas ref={canvas} aria-hidden className="pointer-events-none absolute inset-0 h-full w-full" />
+      )}
     </div>
   );
 }

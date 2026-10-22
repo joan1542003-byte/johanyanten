@@ -19,7 +19,8 @@
       "about": "About",
       "contact": "Contact"
     },
-    "portrait": "Hover over the portrait"
+    "object": "Drag it to spin",
+    "objectLabel": "A 3D donut drawn with characters"
   },
   "work": {
     "eyebrow": "Work",
@@ -73,5 +74,13 @@
     "copied": "Copied!",
     "ascii": "LET’S TALK"
   },
-  "top": "Back to top"
+  "top": "Back to top",
+  "ticker": [
+    "Branding",
+    "Information",
+    "UX/UI",
+    "Data",
+    "Motion",
+    "ASCII art"
+  ]
 }

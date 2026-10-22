@@ -1,5 +1,6 @@
 "use client";
 
+import { Safe } from "@/components/Safe";
 import { useEffect, useRef } from "react";
 import { CELL_RATIO, MONO, RAMP, auraColor, fitCanvas } from "@/lib/ascii";
 
@@ -7,9 +8,9 @@ import { CELL_RATIO, MONO, RAMP, auraColor, fitCanvas } from "@/lib/ascii";
  * A word written in ASCII that rises out of slow waves of characters,
  * colored with the aura gradient. The pointer stirs the waves.
  */
-export function AsciiWord({
+function AsciiWordCanvas({
   text,
-  cell = 9,
+  cell: baseCell = 9,
   waves = 0.32,
   className = "",
 }: {
@@ -34,12 +35,22 @@ export function AsciiWord({
     let ctx: CanvasRenderingContext2D;
     let w = 0;
     let h = 0;
-    const lineH = cell / CELL_RATIO;
+    let cell = baseCell;
+    let lineH = cell / CELL_RATIO;
     const pointer = { x: -1, y: -1, energy: 0 };
 
     // Writes the word into a tiny canvas, one pixel per character cell, and keeps its coverage
     const build = () => {
       ({ ctx, w, h } = fitCanvas(el));
+      // Not laid out yet (hidden tab, first frame): wait for the next resize
+      if (w < 2 || h < 2) {
+        mask = new Float32Array(0);
+        cols = rows = 0;
+        return;
+      }
+      // Larger cells on phones: half the characters, same drawing
+      cell = w < 520 ? baseCell * 1.25 : baseCell;
+      lineH = cell / CELL_RATIO;
       cols = Math.ceil(w / cell);
       rows = Math.ceil(h / lineH);
       const m = document.createElement("canvas");
@@ -62,9 +73,11 @@ export function AsciiWord({
       ctx.textBaseline = "top";
     };
 
+    let last = 0;
     const draw = (time: number) => {
       frame = requestAnimationFrame(draw);
-      if (!visible) return;
+      if (!visible || !mask.length || time - last < 33) return; // 30 fps is plenty for text
+      last = time;
       const t = reduce ? 0 : time / 1000;
       pointer.energy *= 0.96;
       ctx.clearRect(0, 0, w, h);
@@ -106,7 +119,16 @@ export function AsciiWord({
       io.disconnect();
       el.removeEventListener("pointermove", onMove);
     };
-  }, [text, cell, waves]);
+  }, [text, baseCell, waves]);
 
   return <canvas ref={ref} aria-hidden className={`block h-full w-full ${className}`} />;
+}
+
+// Wrapped so a failure here can never break the page
+export function AsciiWord(props: Parameters<typeof AsciiWordCanvas>[0]) {
+  return (
+    <Safe>
+      <AsciiWordCanvas {...props} />
+    </Safe>
+  );
 }

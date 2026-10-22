@@ -19,7 +19,8 @@
       "about": "Sobre mí",
       "contact": "Contacto"
     },
-    "portrait": "Pasa el cursor por el retrato"
+    "object": "Arrástralo para girarlo",
+    "objectLabel": "Una dona en 3D dibujada con caracteres"
   },
   "work": {
     "eyebrow": "Proyectos",
@@ -73,5 +74,13 @@
     "copied": "¡Copiado!",
     "ascii": "HABLEMOS"
   },
-  "top": "Volver arriba"
+  "top": "Volver arriba",
+  "ticker": [
+    "Branding",
+    "Información",
+    "UX/UI",
+    "Datos",
+    "Motion",
+    "Arte ASCII"
+  ]
 }
