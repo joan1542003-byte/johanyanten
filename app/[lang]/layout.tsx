@@ -47,10 +47,8 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
       <body className="min-h-full">
         <Providers>
           <Nav lang={lang} labels={dict.nav} glass={content.glass} />
-          <div className="mx-auto max-w-[1240px] px-3 pt-20 pb-4 sm:px-5 sm:pt-24">
-            {children}
-            <Footer text={dict.footer} top={dict.top} />
-          </div>
+          {children}
+          <Footer text={dict.footer} top={dict.top} />
         </Providers>
       </body>
     </html>

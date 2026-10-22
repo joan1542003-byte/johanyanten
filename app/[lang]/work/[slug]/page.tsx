@@ -52,56 +52,58 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
 
   return (
     <PageTransition>
-      <ProgressIndicator height={3} color="bg-ink" />
-      <main className="grid grid-cols-[minmax(0,1fr)] gap-5 sm:gap-7">
-        <header className="board board-white">
-          <FadeUp className="flex flex-wrap items-center gap-2">
+      <ProgressIndicator height={2} color="bg-ink" />
+      <main>
+        <header className="wrap pt-32 sm:pt-40">
+          <FadeUp className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px] font-semibold">
             <Link
               href={`/${lang}#work`}
               transitionTypes={["nav-back"]}
-              className="chip t-label inline-flex h-10 items-center gap-1.5 rounded-full px-4 transition-colors duration-500 hover:bg-paper"
+              className="group inline-flex items-center gap-1.5 text-ink"
             >
-              <Icon name="back" className="h-4 w-4" /> {dict.project.back}
+              <Icon name="back" className="h-4 w-4 transition-transform duration-500 group-hover:-translate-x-1" />
+              {dict.project.back}
             </Link>
             {project.categories.map((c) => (
-              <span key={c} className="chip t-label inline-flex h-10 items-center gap-2 rounded-full px-4">
-                <span aria-hidden className="h-3.5 w-3.5 rounded-[5px]" style={{ background: skyBackground(categorySky[c]) }} />
+              <span key={c} className="inline-flex items-center gap-2 text-ink/55">
+                <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: skyBackground(categorySky[c]) }} />
                 {dict.work.filters[c]}
               </span>
             ))}
           </FadeUp>
           <FadeUp delay={0.15}>
-            <h1 className="t-h1 mt-6 max-w-[22ch]">
-              {project.title[lang]} <span className="tone">{project.tagline[lang]}</span>
+            <h1 className="t-h1 mt-8 max-w-[20ch]">
+              {project.title[lang]} <span className="text-mute">{project.tagline[lang]}</span>
             </h1>
-          </FadeUp>
-          <FadeUp delay={0.3} duration={1.2} className="mt-8 sm:mt-10">
-            <div className="overflow-hidden rounded-[28px] bg-stone">
-              <ViewTransition name={`cover-${project.slug}`} share="morph" default="none">
-                <Image
-                  src={project.cover.src}
-                  alt={project.title[lang]}
-                  width={project.cover.w}
-                  height={project.cover.h}
-                  sizes="(min-width: 1240px) 1130px, 100vw"
-                  preload
-                  className="max-h-[70svh] w-full object-cover"
-                />
-              </ViewTransition>
-            </div>
           </FadeUp>
         </header>
 
+        <FadeUp delay={0.3} duration={1.2} className="wrap mt-12 sm:mt-16">
+          <div className="overflow-hidden rounded-[24px]">
+            <ViewTransition name={`cover-${project.slug}`} share="morph" default="none">
+              <Image
+                src={project.cover.src}
+                alt={project.title[lang]}
+                width={project.cover.w}
+                height={project.cover.h}
+                sizes="(min-width: 1240px) 1160px, 100vw"
+                preload
+                className="max-h-[72svh] w-full object-cover"
+              />
+            </ViewTransition>
+          </div>
+        </FadeUp>
+
         {paragraphs.length > 0 && (
-          <section className="board">
-            <div className="grid gap-6 md:grid-cols-[minmax(0,0.5fr)_minmax(0,1fr)] md:gap-12">
+          <section className="section wrap">
+            <div className="grid gap-6 md:grid-cols-[minmax(0,0.45fr)_minmax(0,1fr)] md:gap-16">
               <ScrollReveal scale={1} yOffset={16}>
-                <span className="t-label text-soft">{dict.project.about}</span>
+                <h2 className="text-[19px] font-semibold tracking-[-0.015em]">{dict.project.about}</h2>
               </ScrollReveal>
-              <div className="grid gap-5">
+              <div className="grid gap-6">
                 {paragraphs.map((p, i) => (
                   <ScrollReveal key={i} scale={1} yOffset={16}>
-                    <p className="text-[clamp(20px,1.9vw,25px)] leading-[1.5] font-medium tracking-[-0.012em] text-pretty">
+                    <p className="text-[clamp(20px,1.9vw,26px)] leading-[1.5] font-medium tracking-[-0.012em] text-pretty">
                       <Tone text={p} />
                     </p>
                   </ScrollReveal>
@@ -112,36 +114,32 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
         )}
 
         {project.youtube && (
-          <ScrollReveal scale={1} yOffset={18}>
-            <section className="board board-white">
-              <span className="t-label text-soft">{dict.project.video}</span>
-              <div className="mt-5 overflow-hidden rounded-[24px] bg-stone">
-                <iframe
-                  className="aspect-video w-full"
-                  src={`https://www.youtube-nocookie.com/embed/${project.youtube}?rel=0&modestbranding=1&playsinline=1`}
-                  title={`${dict.project.video}: ${project.title[lang]}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
-            </section>
+          <ScrollReveal scale={1} yOffset={20} className="wrap">
+            <div className="overflow-hidden rounded-[24px] bg-stone">
+              <iframe
+                className="aspect-video w-full"
+                src={`https://www.youtube-nocookie.com/embed/${project.youtube}?rel=0&modestbranding=1&playsinline=1`}
+                title={`${dict.project.video}: ${project.title[lang]}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
           </ScrollReveal>
         )}
 
         {project.gallery.length > 0 && (
-          <section className="board board-white">
-            <span className="t-label text-soft">{dict.project.gallery}</span>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 sm:gap-4">
+          <section className="section wrap" aria-label={dict.project.gallery}>
+            <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
               {project.gallery.map((img, i) => {
                 const wide = img.w / img.h > 1.5;
                 return (
-                  <ScrollReveal key={img.src} scale={1} yOffset={18} className={wide ? "sm:col-span-2" : ""}>
+                  <ScrollReveal key={img.src} scale={1} yOffset={20} className={wide ? "sm:col-span-2" : ""}>
                     <div className="relative overflow-hidden rounded-[22px]" style={{ aspectRatio: `${img.w} / ${img.h}` }}>
                       <AsciiImage
                         src={img.src}
                         alt={`${project.title[lang]} — ${i + 1}`}
-                        sizes={wide ? "(min-width: 1240px) 1130px, 100vw" : "(min-width: 640px) 560px, 100vw"}
+                        sizes={wide ? "(min-width: 1240px) 1160px, 100vw" : "(min-width: 640px) 580px, 100vw"}
                         className="object-cover"
                       />
                     </div>
@@ -152,34 +150,37 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
           </section>
         )}
 
-        <ScrollReveal scale={1} yOffset={18}>
-          <Link
-            href={`/${lang}/work/${next.slug}`}
-            transitionTypes={["nav-forward"]}
-            className="board group grid items-center gap-6 transition-colors duration-500 hover:bg-[#e9e3dc] sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)]"
-          >
-            <div className="relative aspect-[16/10] overflow-hidden rounded-[24px] bg-paper">
-              <ViewTransition name={`cover-${next.slug}`} share="morph" default="none">
-                <Image
-                  src={next.cover.src}
-                  alt={next.title[lang]}
-                  fill
-                  sizes="(min-width: 640px) 520px, 100vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                />
-              </ViewTransition>
-            </div>
-            <div>
-              <span className="t-label text-soft">{dict.project.next}</span>
-              <p className="t-h2 mt-2">
-                {next.title[lang]} <span className="tone">{next.tagline[lang]}</span>
-              </p>
-              <span className="pill-ink t-label mt-6 inline-flex h-12 items-center gap-2 rounded-full px-6 transition-transform duration-700 ease-out group-hover:translate-x-1">
-                {dict.project.next} <Icon name="arrow" className="h-4 w-4" />
-              </span>
-            </div>
-          </Link>
-        </ScrollReveal>
+        <section className="wrap pb-10">
+          <ScrollReveal scale={1} yOffset={20}>
+            <Link
+              href={`/${lang}/work/${next.slug}`}
+              transitionTypes={["nav-forward"]}
+              className="group grid items-center gap-8 border-t border-line pt-14 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]"
+            >
+              <div>
+                <span className="t-label text-ink/45">{dict.project.next}</span>
+                <p className="t-h2 mt-3">
+                  {next.title[lang]} <span className="text-mute">{next.tagline[lang]}</span>
+                </p>
+                <span className="mt-6 inline-flex items-center gap-2 text-[16px] font-semibold underline decoration-ink/25 decoration-2 underline-offset-[6px] transition-[text-decoration-color] duration-500 group-hover:decoration-ink">
+                  {dict.project.next}
+                  <Icon name="arrow" className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" />
+                </span>
+              </div>
+              <div className="relative aspect-[16/10] overflow-hidden rounded-[22px]">
+                <ViewTransition name={`cover-${next.slug}`} share="morph" default="none">
+                  <Image
+                    src={next.cover.src}
+                    alt={next.title[lang]}
+                    fill
+                    sizes="(min-width: 640px) 500px, 100vw"
+                    className="object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+                  />
+                </ViewTransition>
+              </div>
+            </Link>
+          </ScrollReveal>
+        </section>
       </main>
     </PageTransition>
   );

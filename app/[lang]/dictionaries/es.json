@@ -12,13 +12,6 @@
   "hero": {
     "contact": "Hablemos",
     "work": "Ver proyectos",
-    "toc": {
-      "work": "Proyectos",
-      "disciplines": "Lo que hago",
-      "tools": "Herramientas",
-      "about": "Sobre mí",
-      "contact": "Contacto"
-    },
     "object": "Arrástralo para girarlo",
     "objectLabel": "Una dona en 3D dibujada con caracteres"
   },
@@ -74,13 +67,5 @@
     "copied": "¡Copiado!",
     "ascii": "HABLEMOS"
   },
-  "top": "Volver arriba",
-  "ticker": [
-    "Branding",
-    "Información",
-    "UX/UI",
-    "Datos",
-    "Motion",
-    "Arte ASCII"
-  ]
+  "top": "Volver arriba"
 }

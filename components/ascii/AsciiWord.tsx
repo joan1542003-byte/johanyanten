@@ -48,8 +48,8 @@ function AsciiWordCanvas({
         cols = rows = 0;
         return;
       }
-      // Larger cells on phones: half the characters, same drawing
-      cell = w < 520 ? baseCell * 1.25 : baseCell;
+      // Finer cells on phones, or the word has too few characters to read
+      cell = w < 520 ? baseCell * 0.7 : baseCell;
       lineH = cell / CELL_RATIO;
       cols = Math.ceil(w / cell);
       rows = Math.ceil(h / lineH);
@@ -57,7 +57,8 @@ function AsciiWordCanvas({
       m.width = cols;
       m.height = rows;
       const mc = m.getContext("2d", { willReadFrequently: true })!;
-      let size = rows * 0.8;
+      // A cell is taller than wide, so squash the word vertically to keep its real proportions
+      let size = (rows * 0.8) / CELL_RATIO;
       mc.font = `700 ${size}px Helvetica, Arial, sans-serif`;
       const fit = (cols * 0.92) / mc.measureText(text).width;
       if (fit < 1) size *= fit;
@@ -65,7 +66,8 @@ function AsciiWordCanvas({
       mc.textAlign = "center";
       mc.textBaseline = "middle";
       mc.fillStyle = "#fff";
-      mc.fillText(text, cols / 2, rows / 2 + size * 0.05);
+      mc.setTransform(1, 0, 0, CELL_RATIO, 0, 0);
+      mc.fillText(text, cols / 2, rows / 2 / CELL_RATIO + size * 0.05);
       const d = mc.getImageData(0, 0, cols, rows).data;
       mask = new Float32Array(cols * rows);
       for (let i = 0; i < mask.length; i++) mask[i] = d[i * 4 + 3] / 255;

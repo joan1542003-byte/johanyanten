@@ -13,8 +13,26 @@ type Shape = "torus" | "cube";
  * A 3D object drawn with characters, in the spirit of the classic spinning donut.
  * It turns on its own; drag to spin it, and it keeps the momentum.
  */
-function AsciiObjectCanvas({ shape = "torus", label, className = "" }: { shape?: Shape; label: string; className?: string }) {
+function AsciiObjectCanvas({
+  shape = "torus",
+  label,
+  className = "",
+  size = 0.36,
+  center = [0.5, 0.5],
+  field = false,
+}: {
+  shape?: Shape;
+  label: string;
+  className?: string;
+  /** Size of the object relative to the canvas */
+  size?: number;
+  /** Where the object sits, as fractions of width and height */
+  center?: [number, number];
+  /** Fill the rest of the canvas with a faint, drifting field of characters */
+  field?: boolean;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const [posX, posY] = center;
 
   useEffect(() => {
     const el = ref.current;
@@ -55,8 +73,8 @@ function AsciiObjectCanvas({ shape = "torus", label, className = "" }: { shape?:
     // Projects one surface point; keeps the nearest one per cell
     const plot = (x: number, y: number, zz: number, L: number, scale: number) => {
       const ooz = 1 / zz;
-      const xp = Math.floor(cols / 2 + scale * ooz * x);
-      const yp = Math.floor(rows / 2 - scale * ooz * y * CELL_RATIO);
+      const xp = Math.floor(cols * posX + scale * ooz * x);
+      const yp = Math.floor(rows * posY - scale * ooz * y * CELL_RATIO);
       if (xp < 0 || xp >= cols || yp < 0 || yp >= rows) return;
       const i = xp + yp * cols;
       if (ooz > z[i]) {
@@ -70,7 +88,7 @@ function AsciiObjectCanvas({ shape = "torus", label, className = "" }: { shape?:
       const R1 = 1;
       const R2 = 2;
       const K2 = 5;
-      const scale = (Math.min(cols, rows / CELL_RATIO) * K2 * 0.36) / (R1 + R2);
+      const scale = (Math.min(cols, rows / CELL_RATIO) * K2 * size) / (R1 + R2);
       // Fewer surface samples on small canvases: same look, less work on phones
       const [stepT, stepP] = cols > 70 ? [0.07, 0.025] : [0.1, 0.038];
       for (let t = 0; t < 6.283; t += stepT) {
@@ -92,7 +110,7 @@ function AsciiObjectCanvas({ shape = "torus", label, className = "" }: { shape?:
     const renderCube = () => {
       const [cA, sA, cB, sB] = [Math.cos(A), Math.sin(A), Math.cos(B), Math.sin(B)];
       const K2 = 5;
-      const scale = Math.min(cols, rows / CELL_RATIO) * K2 * 0.2;
+      const scale = Math.min(cols, rows / CELL_RATIO) * K2 * size * 0.55;
       const light = [0, 0.7, -0.7];
       const faces: [number[], number[], number[]][] = [
         [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
@@ -122,8 +140,23 @@ function AsciiObjectCanvas({ shape = "torus", label, className = "" }: { shape?:
 
     // Group characters by color band and shade, so the fill color changes rarely
     const BANDS = 6;
-    const paint = () => {
+    const DUST = " .·:+";
+    const paintField = (t: number) => {
+      ctx.fillStyle = "rgba(20,19,18,0.16)";
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          if (z[x + y * cols]) continue;
+          const v = Math.sin(x * 0.11 + t * 0.35) * Math.cos(y * 0.17 - t * 0.25) + Math.sin((x - y) * 0.05 + t * 0.2);
+          const k = Math.floor(((v + 2) / 4) * DUST.length * 1.15) - 1;
+          if (k <= 0) continue;
+          ctx.fillText(DUST[Math.min(DUST.length - 1, k)], x * cell, y * lineH);
+        }
+      }
+    };
+
+    const paint = (t = 0) => {
       ctx.clearRect(0, 0, w, h);
+      if (field) paintField(t);
       const buckets: number[][] = Array.from({ length: BANDS * SHADE.length }, () => []);
       for (let i = 0; i < z.length; i++) {
         if (z[i] === 0) continue;
@@ -159,7 +192,7 @@ function AsciiObjectCanvas({ shape = "torus", label, className = "" }: { shape?:
       z.fill(0);
       if (shape === "torus") renderTorus();
       else renderCube();
-      paint();
+      paint(now / 1000);
     };
 
     const onDown = (e: PointerEvent) => {
@@ -208,7 +241,7 @@ function AsciiObjectCanvas({ shape = "torus", label, className = "" }: { shape?:
       el.removeEventListener("pointerup", onUp);
       el.removeEventListener("pointercancel", onUp);
     };
-  }, [shape]);
+  }, [shape, size, posX, posY, field]);
 
   return (
     <canvas

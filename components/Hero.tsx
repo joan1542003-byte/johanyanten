@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import type { HeroContent } from "@/lib/content";
 import { Aura } from "./Aura";
 import { BlurText } from "./amicro/blur-text";
@@ -9,7 +10,7 @@ import { AsciiObject } from "./ascii/AsciiObject";
 import { Icon } from "./Icon";
 
 type Props = HeroContent & {
-  labels: { contact: string; work: string; object: string; objectLabel: string; toc: Record<string, string> };
+  labels: { contact: string; work: string; object: string; objectLabel: string };
 };
 
 // Deep pastel gradient across the second half of the headline (readable at 3:1+ on paper)
@@ -25,69 +26,71 @@ const tone = (t: number) => {
   return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(",")})`;
 };
 
-// Aura board: name and two-tone line on the left, a 3D object drawn in ASCII on the right
+const wideQuery = "(min-width: 1024px)";
+const subscribeWide = (cb: () => void) => {
+  const mq = window.matchMedia(wideQuery);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+};
+
+// Full-bleed hero: the whole background is ASCII art, the words sit on top of it
 export function Hero({ eyebrow, title, subtitle, labels }: Props) {
+  const wide = useSyncExternalStore(subscribeWide, () => window.matchMedia(wideQuery).matches, () => true);
+
   return (
-    <header className="relative overflow-hidden rounded-[40px] p-[clamp(22px,4.5vw,60px)]">
-      <Aura mode="hero" />
-      <div className="relative grid min-h-[clamp(520px,70svh,700px)] grid-cols-[minmax(0,1fr)] items-end gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-        <div className="grid min-w-0 justify-items-start gap-7">
-          <FadeUp className="flex items-center gap-3">
-            <span className="pill-ink flex h-12 w-12 items-center justify-center rounded-[15px] text-[17px] font-semibold tracking-tight">
-              JY
-            </span>
-            <span className="t-label">
-              Johan Yanten <span className="text-ink/55">· {eyebrow}</span>
-            </span>
+    <header className="relative isolate flex min-h-[clamp(640px,100svh,980px)] items-end overflow-hidden pt-28 pb-[clamp(40px,7vw,96px)]">
+      <Aura mode="hero" className="opacity-70" />
+      <div className="absolute inset-0">
+        <AsciiObject
+          shape="torus"
+          field
+          label={labels.objectLabel}
+          size={0.3}
+          center={wide ? [0.72, 0.5] : [0.5, 0.3]}
+        />
+      </div>
+      {/* Paper wash behind the words so the art never fights the text */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: wide
+            ? "linear-gradient(90deg, rgba(247,244,240,0.92) 0%, rgba(247,244,240,0.7) 38%, rgba(247,244,240,0) 62%)"
+            : "linear-gradient(0deg, rgba(247,244,240,0.96) 0%, rgba(247,244,240,0.8) 45%, rgba(247,244,240,0) 70%)",
+        }}
+      />
+
+      <div className="wrap pointer-events-none relative">
+        <div className="pointer-events-auto grid max-w-[640px] justify-items-start gap-7">
+          <FadeUp>
+            <p className="t-label text-ink/70">
+              Johan Yanten <span className="text-ink/40">— {eyebrow}</span>
+            </p>
           </FadeUp>
 
-          <h1 className="t-display max-w-[19ch]">
+          <h1 className="t-display">
             <BlurText text={title} />{" "}
             <BlurText text={subtitle} tint={tone} staggerDelay={0.045} delay={0.35} />
           </h1>
 
-          <FadeUp delay={1.1} className="flex flex-wrap gap-2.5">
+          <FadeUp delay={1.1} className="flex flex-wrap items-center gap-3">
             <MagneticButton href="#contact" className="pill-ink h-12 gap-2 rounded-full px-6 text-[16px] font-semibold">
               <Icon name="mail" /> {labels.contact}
             </MagneticButton>
             <a
               href="#work"
-              className="pill-white inline-flex h-12 items-center gap-2 rounded-full px-6 text-[16px] font-semibold transition-transform duration-500 ease-out hover:-translate-y-0.5"
+              className="group inline-flex h-12 items-center gap-2 px-3 text-[16px] font-semibold underline decoration-ink/25 decoration-2 underline-offset-[6px] transition-[text-decoration-color] duration-500 hover:decoration-ink"
             >
-              <Icon name="folder" /> {labels.work}
+              {labels.work}
+              <Icon name="arrow" className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" />
             </a>
           </FadeUp>
-
-          <FadeUp delay={1.35}>
-            <nav aria-label="Secciones" className="flex flex-wrap gap-2">
-              {Object.entries(labels.toc).map(([id, label]) => (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  className="t-label rounded-full bg-white/60 px-4 py-2 backdrop-blur-sm transition-colors duration-500 hover:bg-white"
-                >
-                  {label}
-                </a>
-              ))}
-            </nav>
-          </FadeUp>
         </div>
-
-        <FadeUp delay={0.5} duration={1.4} className="relative mx-auto w-full max-w-[420px] min-w-0 lg:max-w-none">
-          <div className="rounded-[30px] bg-white/45 p-3 shadow-[0_30px_60px_-30px_rgba(30,22,12,0.45)] backdrop-blur-md">
-            <div
-              className="aspect-[4/4.4] overflow-hidden rounded-[22px]"
-              style={{ background: "radial-gradient(90% 70% at 50% 35%, #fffdf9 0%, #f4eee6 100%)" }}
-            >
-              <AsciiObject shape="torus" label={labels.objectLabel} />
-            </div>
-            <p className="t-label mt-3 flex items-center justify-between px-1.5 text-ink/60">
-              <span>{labels.object}</span>
-              <span className="font-mono text-[13px]">ascii</span>
-            </p>
-          </div>
-        </FadeUp>
       </div>
+
+      <FadeUp delay={1.6} className="pointer-events-none absolute right-[clamp(18px,4vw,40px)] bottom-6 hidden lg:block">
+        <p className="font-mono text-[13px] text-ink/50">↻ {labels.object}</p>
+      </FadeUp>
     </header>
   );
 }

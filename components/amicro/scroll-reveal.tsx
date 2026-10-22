@@ -1,8 +1,6 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'motion/react';
-import { ease } from '@/lib/motion';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -13,6 +11,7 @@ interface ScrollRevealProps {
   className?: string;
 }
 
+// Rises in once when it enters the viewport. The motion itself is a CSS transition (.reveal in globals.css)
 export function ScrollReveal({
   children,
   duration = 1.1,
@@ -21,18 +20,39 @@ export function ScrollReveal({
   scale = 0.95,
   className = '',
 }: ScrollRevealProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: yOffset, x: xOffset, scale }}
-      whileInView={{ opacity: 1, y: 0, x: 0, scale: 1 }}
-      viewport={{ once: true, margin: '0px 0px -8% 0px' }}
-      transition={{
-        duration,
-        ease,
-      }}
-      className={className}
+    <div
+      ref={ref}
+      className={`reveal ${shown ? 'is-in' : ''} ${className}`}
+      style={
+        {
+          '--rd': `${duration}s`,
+          '--ry': `${yOffset}px`,
+          '--rx': `${xOffset}px`,
+          '--rs': scale,
+        } as React.CSSProperties
+      }
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

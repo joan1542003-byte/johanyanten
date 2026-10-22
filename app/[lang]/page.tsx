@@ -6,7 +6,6 @@ import { WorkGrid } from "@/components/WorkGrid";
 import { PageTransition } from "@/components/PageTransition";
 import { About, Contact, Disciplines, Tools } from "@/components/Sections";
 import { INSTAGRAM, SITE_URL } from "@/lib/site";
-import { Ticker } from "@/components/Ticker";
 
 export default async function Home({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
@@ -35,14 +34,13 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   return (
     <PageTransition>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
-      <main className="grid grid-cols-[minmax(0,1fr)] gap-5 sm:gap-7">
+      <main>
         <Hero {...content.hero[lang]} labels={dict.hero} />
-        <Ticker items={dict.ticker} />
-        <section id="work" className="board board-white scroll-mt-24">
+        <section id="work" className="section wrap scroll-mt-20">
           <WorkGrid lang={lang} projects={cards} labels={dict.work} />
         </section>
         <Disciplines {...dict.disciplines} names={dict.work.filters} />
-        <Tools {...dict.tools} glass={content.glass} />
+        <Tools {...dict.tools} />
         <About {...content.about[lang]} />
         <Contact {...content.contact[lang]} copied={dict.contact.copied} ascii={dict.contact.ascii} />
       </main>

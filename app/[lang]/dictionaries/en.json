@@ -12,13 +12,6 @@
   "hero": {
     "contact": "Let’s talk",
     "work": "See work",
-    "toc": {
-      "work": "Work",
-      "disciplines": "What I do",
-      "tools": "Tools",
-      "about": "About",
-      "contact": "Contact"
-    },
     "object": "Drag it to spin",
     "objectLabel": "A 3D donut drawn with characters"
   },
@@ -74,13 +67,5 @@
     "copied": "Copied!",
     "ascii": "LET’S TALK"
   },
-  "top": "Back to top",
-  "ticker": [
-    "Branding",
-    "Information",
-    "UX/UI",
-    "Data",
-    "Motion",
-    "ASCII art"
-  ]
+  "top": "Back to top"
 }

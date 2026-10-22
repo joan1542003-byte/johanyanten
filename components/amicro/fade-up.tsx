@@ -1,8 +1,4 @@
-'use client';
-
 import React from 'react';
-import { motion } from 'motion/react';
-import { ease } from '@/lib/motion';
 
 interface FadeUpProps {
   children: React.ReactNode;
@@ -12,6 +8,7 @@ interface FadeUpProps {
   className?: string;
 }
 
+// Rises in on load. Pure CSS (.enter in globals.css), so it starts with the first paint
 export function FadeUp({
   children,
   duration = 1.1,
@@ -20,17 +17,11 @@ export function FadeUp({
   className = '',
 }: FadeUpProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: yOffset }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration,
-        delay,
-        ease,
-      }}
-      className={className}
+    <div
+      className={`enter ${className}`}
+      style={{ '--rd': `${duration}s`, '--delay': `${delay}s`, '--ry': `${yOffset}px` } as React.CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
