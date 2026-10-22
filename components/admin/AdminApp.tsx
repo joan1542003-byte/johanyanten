@@ -7,6 +7,7 @@ import { getBrowserClient } from "./client";
 import { Button, inputClass, Label, ToastProvider } from "./ui";
 import { ProjectsPanel } from "./ProjectsPanel";
 import { TextsPanel } from "./TextsPanel";
+import { GlassPanel } from "./GlassPanel";
 
 type Status = "loading" | "signed-out" | "forbidden" | "ready";
 
@@ -182,7 +183,8 @@ function Login() {
 
 const tabs = [
   { id: "projects", label: "Proyectos" },
-  { id: "texts", label: "Textos del sitio" },
+  { id: "texts", label: "Textos" },
+  { id: "glass", label: "Liquid glass" },
 ] as const;
 
 function Dashboard({ session, onSignOut }: { session: Session; onSignOut: () => void }) {
@@ -217,7 +219,9 @@ function Dashboard({ session, onSignOut }: { session: Session; onSignOut: () => 
           transition={{ duration: 0.25 }}
           className="mt-10"
         >
-          {tab === "projects" ? <ProjectsPanel session={session} /> : <TextsPanel session={session} />}
+          {tab === "projects" && <ProjectsPanel session={session} />}
+          {tab === "texts" && <TextsPanel session={session} />}
+          {tab === "glass" && <GlassPanel session={session} />}
         </motion.main>
       </AnimatePresence>
     </motion.div>

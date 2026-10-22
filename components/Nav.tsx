@@ -4,19 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { LiquidGlass } from "./LiquidGlass";
+import type { GlassSettings } from "@/lib/glass";
 import { calm, ease } from "@/lib/motion";
+import { LiquidGlass } from "./LiquidGlass";
 
 type Props = {
   lang: string;
   labels: { work: string; about: string; contact: string; menu: string };
+  glass: GlassSettings;
 };
 
 const sections = ["work", "about", "contact"] as const;
 type Section = (typeof sections)[number];
 
-
-export function Nav({ lang, labels }: Props) {
+export function Nav({ lang, labels, glass }: Props) {
   const pathname = usePathname();
   const isHome = pathname === `/${lang}`;
   const otherLang = lang === "es" ? "en" : "es";
@@ -45,13 +46,13 @@ export function Nav({ lang, labels }: Props) {
 
   return (
     <motion.header
-      initial={{ y: -60, opacity: 0 }}
+      initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.9, ease, delay: 0.2 }}
-      className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4"
+      className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3 sm:top-4"
     >
       {/* Desktop */}
-      <LiquidGlass className="pointer-events-auto hidden items-center gap-1 p-1.5 sm:flex">
+      <LiquidGlass settings={glass} className="pointer-events-auto hidden items-center gap-1 p-1.5 sm:flex">
         <Link
           href={`/${lang}`}
           aria-label="JY, Johan Yanten"
@@ -65,12 +66,12 @@ export function Nav({ lang, labels }: Props) {
               key={s}
               href={`/${lang}#${s}`}
               onMouseEnter={() => setHovered(s)}
-              className={`relative rounded-full px-4 py-2 text-sm transition-colors duration-200 ${
-                highlighted === s ? "text-ink font-medium" : "text-muted"
+              className={`relative rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
+                highlighted === s ? "text-white" : "text-ink/70"
               }`}
             >
               {highlighted === s && (
-                <motion.span layoutId="nav-indicator" transition={calm} className="k-active absolute inset-0 rounded-full" />
+                <motion.span layoutId="nav-indicator" transition={calm} className="absolute inset-0 rounded-full bg-ink" />
               )}
               <span className="relative">{labels[s]}</span>
             </Link>
@@ -80,18 +81,18 @@ export function Nav({ lang, labels }: Props) {
       </LiquidGlass>
 
       {/* Mobile */}
-      <MobileMenu lang={lang} labels={labels} switchHref={switchHref} />
+      <MobileMenu lang={lang} labels={labels} switchHref={switchHref} glass={glass} />
     </motion.header>
   );
 }
 
 function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string }) {
   return (
-    <Link href={href} className="k-well ml-1 inline-flex rounded-full p-0.5 text-xs font-medium">
+    <Link href={href} className="ml-1 inline-flex rounded-full bg-white/70 p-0.5 text-xs font-semibold">
       <span className="sr-only">{lang === "es" ? "Cambiar idioma:" : "Switch language:"}</span>
       {["es", "en"].map((l) => (
-        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-ink" : "text-muted"}`}>
-          {l === lang && <motion.span layoutId={id} transition={calm} className="k-active absolute inset-0 rounded-full" />}
+        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-white" : "text-ink/60"}`}>
+          {l === lang && <motion.span layoutId={id} transition={calm} className="absolute inset-0 rounded-full bg-ink" />}
           <span className="relative">{l}</span>
         </span>
       ))}
@@ -103,7 +104,17 @@ function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string
  * Pill that opens into a menu one axis at a time: taller first, then wider, then the content.
  * Closing runs the same steps in reverse.
  */
-function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props["labels"]; switchHref: string }) {
+function MobileMenu({
+  lang,
+  labels,
+  switchHref,
+  glass,
+}: {
+  lang: string;
+  labels: Props["labels"];
+  switchHref: string;
+  glass: GlassSettings;
+}) {
   const [open, setOpen] = useState(false);
   const [vw, setVw] = useState(0);
 
@@ -113,7 +124,7 @@ function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props[
   };
 
   const closedW = 196;
-  const openW = Math.max(closedW, vw - 32);
+  const openW = Math.max(closedW, vw - 24);
 
   return (
     <motion.div
@@ -125,7 +136,12 @@ function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props[
         width: { duration: 0.5, ease, delay: open ? 0.35 : 0.1 },
       }}
     >
-      <LiquidGlass radius={26} tint={open ? 0.94 : 0.32} className="flex h-full w-full flex-col overflow-hidden p-1.5">
+      <LiquidGlass
+        settings={glass}
+        radius={26}
+        tint={open ? 0.94 : undefined}
+        className="flex h-full w-full flex-col overflow-hidden p-1.5"
+      >
         <div className="flex h-10 shrink-0 items-center gap-2">
           <Link
             href={`/${lang}`}
@@ -134,14 +150,12 @@ function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props[
           >
             JY
           </Link>
-          <motion.span layout="position" className="text-sm font-medium tracking-tight whitespace-nowrap">
-            Johan Yanten
-          </motion.span>
+          <span className="text-sm font-semibold whitespace-nowrap">Johan Yanten</span>
           <button
             onClick={toggle}
             aria-expanded={open}
             aria-label={labels.menu}
-            className="k-button ml-auto flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full"
+            className="ml-auto flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full bg-white shadow-[0_1px_2px_rgba(30,22,12,0.1)]"
           >
             <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 3 : 0 }} transition={calm} className="h-[1.5px] w-4 rounded bg-ink" />
             <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -3.5 : 0 }} transition={calm} className="h-[1.5px] w-4 rounded bg-ink" />
@@ -167,7 +181,7 @@ function MobileMenu({ lang, labels, switchHref }: { lang: string; labels: Props[
                     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease } },
                   }}
                 >
-                  <Link href={`/${lang}#${s}`} onClick={() => setOpen(false)} className="block py-1.5 text-2xl font-medium tracking-tight">
+                  <Link href={`/${lang}#${s}`} onClick={() => setOpen(false)} className="block py-1.5 text-2xl font-semibold tracking-tight">
                     {labels[s]}
                   </Link>
                 </motion.div>

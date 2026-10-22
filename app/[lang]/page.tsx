@@ -4,7 +4,7 @@ import { getProjects, getSiteContent } from "@/lib/content";
 import { Hero } from "@/components/Hero";
 import { WorkGrid } from "@/components/WorkGrid";
 import { PageTransition } from "@/components/PageTransition";
-import { About, Contact, Tools } from "@/components/Sections";
+import { About, Contact, Disciplines, Tools } from "@/components/Sections";
 import { INSTAGRAM, SITE_URL } from "@/lib/site";
 
 export default async function Home({ params }: PageProps<"/[lang]">) {
@@ -20,7 +20,6 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
     isNew: p.is_new,
     cover: p.cover,
   }));
-  const featured = projects.map((p) => ({ slug: p.slug, title: p.title[lang], src: p.cover.src }));
 
   // Structured data so search engines know who the site is about
   const person = {
@@ -35,11 +34,12 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   return (
     <PageTransition>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
-      <main>
-        <Hero {...content.hero[lang]} lang={lang} featured={featured} labels={dict.hero} />
-        <section id="work" className="scroll-mt-24 px-6 py-14 sm:px-12 sm:py-16">
+      <main className="grid gap-5 sm:gap-7">
+        <Hero {...content.hero[lang]} labels={dict.hero} />
+        <section id="work" className="board board-white scroll-mt-24">
           <WorkGrid lang={lang} projects={cards} labels={dict.work} />
         </section>
+        <Disciplines {...dict.disciplines} names={dict.work.filters} />
         <Tools {...dict.tools} />
         <About {...content.about[lang]} />
         <Contact {...content.contact[lang]} copied={dict.contact.copied} />

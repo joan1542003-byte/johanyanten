@@ -9,9 +9,20 @@
     "contact": "Contacto",
     "menu": "Menú"
   },
+  "hero": {
+    "contact": "Hablemos",
+    "work": "Ver proyectos",
+    "toc": {
+      "work": "Proyectos",
+      "disciplines": "Lo que hago",
+      "tools": "Herramientas",
+      "about": "Sobre mí",
+      "contact": "Contacto"
+    }
+  },
   "work": {
     "eyebrow": "Proyectos",
-    "title": "Algunos proyectos en *branding, información, UX/UI y motion*.",
+    "title": "Trabajo seleccionado, *de la marca a la pantalla.*",
     "new": "Nuevo",
     "filters": {
       "all": "Todo",
@@ -22,9 +33,24 @@
       "motion": "Motion"
     }
   },
+  "disciplines": {
+    "eyebrow": "Lo que hago",
+    "title": "Cinco disciplinas, *un mismo cuidado.*",
+    "items": {
+      "branding": "Identidades, logotipos y sistemas visuales con personalidad.",
+      "info": "Señalética e infografía que explican sin ruido.",
+      "uxui": "Interfaces y flujos que se entienden a la primera.",
+      "data": "Datos convertidos en experiencias que se sienten.",
+      "motion": "Video, animación y edición con ritmo."
+    }
+  },
   "tools": {
     "eyebrow": "Herramientas",
-    "title": "Las herramientas con las que *trabajo* cada día.",
+    "title": "Con qué trabajo, *cada día.*",
+    "groups": {
+      "design": "Diseño",
+      "motion": "Movimiento"
+    },
     "items": {
       "figma": "Prototipado e interfaces. Mi centro de operaciones donde unifico los proyectos.",
       "indesign": "Diseño editorial, tipografía y maquetación profesional.",
@@ -42,11 +68,6 @@
     "next": "Siguiente proyecto"
   },
   "footer": "Diseñado y construido por Johan Yanten.",
-  "hero": {
-    "contact": "Hablemos",
-    "view": "Ver proyecto",
-    "next": "Otro proyecto"
-  },
   "contact": {
     "copied": "¡Copiado!"
   },

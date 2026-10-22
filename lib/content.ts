@@ -1,5 +1,8 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { createPublicClient } from "./supabase";
+import { defaultGlass, type GlassSettings } from "./glass";
+
+export type { GlassSettings };
 
 export type Locale = "es" | "en";
 export type Localized = Record<Locale, string>;
@@ -31,10 +34,12 @@ export type ContactContent = {
   instagram: string;
   handle: string;
 };
+
 export type SiteContent = {
   hero: Record<Locale, HeroContent>;
   about: Record<Locale, AboutContent>;
   contact: Record<Locale, ContactContent>;
+  glass: GlassSettings;
 };
 
 // Every read is tagged "content"; the admin panel expires the tag after saving
@@ -59,5 +64,6 @@ export async function getSiteContent(): Promise<SiteContent> {
   cacheLife("max");
   const { data, error } = await createPublicClient().from("site_content").select("key, value");
   if (error) throw new Error(`Could not load site content: ${error.message}`);
-  return Object.fromEntries(data.map((row) => [row.key, row.value])) as SiteContent;
+  const content = Object.fromEntries(data.map((row) => [row.key, row.value])) as SiteContent;
+  return { ...content, glass: { ...defaultGlass, ...content.glass } };
 }

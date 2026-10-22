@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
-import { satoshi } from "@/components/fonts";
+import { instrument } from "@/components/fonts";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Sections";
 import { Providers } from "@/components/Providers";
 import { SITE_URL } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 import "../globals.css";
 
 export async function generateStaticParams() {
@@ -39,19 +40,16 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
-  const dict = await getDictionary(lang);
+  const [dict, content] = await Promise.all([getDictionary(lang), getSiteContent()]);
 
   return (
-    <html lang={lang} data-scroll-behavior="smooth" className={`${satoshi.variable} h-full antialiased`}>
+    <html lang={lang} data-scroll-behavior="smooth" className={`${instrument.variable} h-full antialiased`}>
       <body className="min-h-full">
         <Providers>
-          <Nav lang={lang} labels={dict.nav} />
-          {/* All content lives on one sheet, as on kree8.studio */}
-          <div className="px-3 pt-24 pb-6 sm:px-6 sm:pt-28">
-            <div className="k-panel mx-auto max-w-[920px] overflow-hidden rounded-[29px]">
-              {children}
-              <Footer text={dict.footer} top={dict.top} />
-            </div>
+          <Nav lang={lang} labels={dict.nav} glass={content.glass} />
+          <div className="mx-auto max-w-[1240px] px-3 pt-20 pb-4 sm:px-5 sm:pt-24">
+            {children}
+            <Footer text={dict.footer} top={dict.top} />
           </div>
         </Providers>
       </body>

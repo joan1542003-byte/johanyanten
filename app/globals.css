@@ -1,113 +1,159 @@
 @import "tailwindcss";
 
-/* Visual base measured from kree8.studio: soft grays, slate text, layered violet-gray shadows */
+/* Visual language from Relevo: warm paper, stone and white boards, ink, pastel tiles, grainy skies */
 :root {
-  --canvas: #e8e8e8;
-  --panel: #efefef;
-  --ink: #304f67;
-  --muted: #57687a;
-  --line: rgba(48, 79, 103, 0.1);
-  --accent: #e0559b;
+  --paper: #f7f4f0;
+  --stone: #eee9e3;
+  --white: #ffffff;
+  --ink: #141312;
+  /* Second tone of large headlines (3:1 on every surface) */
+  --mute: #8b8580;
+  /* Small secondary text (4.5:1 on every surface) */
+  --soft: #68635e;
+  --line: #e4ded6;
+  --t-butter: #f4e496;
+  --t-sky: #b3e5fc;
+  --t-lime: #c6eeae;
+  --t-blush: #fac8d9;
+  --t-lilac: #dfd1fc;
+  --t-peach: #fbd1b3;
+
+  --shadow: 0 1px 2px rgba(30, 22, 12, 0.05), 0 18px 44px -26px rgba(30, 22, 12, 0.28);
+  --shadow-lift: 0 2px 3px rgba(30, 22, 12, 0.06), 0 30px 60px -30px rgba(30, 22, 12, 0.4);
 
   /* Aliases used by the admin panel */
-  --background: var(--canvas);
+  --background: var(--paper);
   --foreground: var(--ink);
-
-  --shadow-soft:
-    0 1.67px 4.18px rgba(181, 186, 203, 0.31), 0 17.57px 10.88px rgba(181, 187, 203, 0.16),
-    0 31.8px 12.55px rgba(181, 187, 203, 0.05), 0 50.2px 14.23px rgba(181, 193, 203, 0.01);
+  --muted: var(--soft);
+  --accent: var(--ink);
 }
 
 @theme inline {
-  --color-background: var(--canvas);
+  --color-background: var(--paper);
   --color-foreground: var(--ink);
-  --color-canvas: var(--canvas);
-  --color-panel: var(--panel);
+  --color-paper: var(--paper);
+  --color-stone: var(--stone);
   --color-ink: var(--ink);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --color-mute: var(--mute);
+  --color-soft: var(--soft);
+  --color-muted: var(--soft);
+  --color-line: var(--line);
+  --color-accent: var(--ink);
+  --color-butter: var(--t-butter);
+  --color-sky: var(--t-sky);
+  --color-lime: var(--t-lime);
+  --color-blush: var(--t-blush);
+  --color-lilac: var(--t-lilac);
+  --color-peach: var(--t-peach);
+  --font-sans: var(--font-instrument), "Helvetica Neue", Arial, sans-serif;
 }
 
+html,
 body {
-  background: var(--canvas);
+  background: var(--paper);
+}
+body {
   color: var(--ink);
   font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
-
-/* Main content sheet */
-.k-panel {
-  background: var(--panel);
-  box-shadow:
-    0 1.67px 4.18px rgba(183, 181, 203, 0.31), 0 8.37px 8.37px rgba(183, 181, 203, 0.27),
-    0 17.57px 10.88px rgba(183, 181, 203, 0.16), 0 31.8px 12.55px rgba(183, 181, 203, 0.05),
-    0 50.21px 14.23px rgba(183, 181, 203, 0.01);
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  letter-spacing: -0.025em;
 }
 
-/* White pill with an inner glow */
-.k-button {
-  background: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: var(--shadow-soft), inset 0 7px 32px #fff;
-  transition: transform 150ms ease-out, box-shadow 200ms ease-out;
+/* ---------- Pieces ---------- */
+
+/* Large rounded section */
+.board {
+  background: var(--stone);
+  border-radius: 40px;
+  padding-inline: clamp(18px, 4vw, 56px);
+  padding-block: clamp(36px, 5vw, 64px);
 }
-.k-button:active {
-  transform: scale(0.97);
+.board-white {
+  background: var(--white);
 }
 
-/* Active navigation pill */
-.k-active {
-  background: #f0f2f5;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: var(--shadow-soft), inset 0 7px 32px #fff;
+.card {
+  background: var(--white);
+  border-radius: 22px;
+  box-shadow: 0 1px 2px rgba(30, 22, 12, 0.05);
 }
 
-/* Media frame: thick white border sitting on a solid lip */
-.k-frame {
-  background: #fafafa;
-  border: 8px solid #fff;
-  box-shadow:
-    0 11px 0 rgba(206, 215, 222, 0.75), 0 7px 7px rgba(183, 181, 203, 0.27),
-    0 14.76px 9.13px rgba(183, 181, 203, 0.16), 0 26.7px 10.54px rgba(183, 181, 203, 0.05);
-}
-
-/* Recessed tray for tabs and tags */
-.k-well {
-  background: #e6e7e9;
-  box-shadow: inset 0 0.55px 2.19px rgba(0, 0, 0, 0.08);
-}
-
-/* Small neutral tag */
-.k-tag {
-  background: rgba(213, 219, 224, 0.45);
-}
-
-/* The one colorful element: primary contact button */
-.k-gradient {
+/* Ink pill, ghost pill and translucent pill */
+.pill-ink {
+  background: var(--ink);
   color: #fff;
-  background:
-    radial-gradient(70% 120% at 15% 10%, #ff8fcf 0%, transparent 60%),
-    radial-gradient(70% 120% at 90% 20%, #ffb37a 0%, transparent 60%),
-    radial-gradient(90% 120% at 60% 110%, #8a7bff 0%, transparent 70%),
-    #f27fb8;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.25),
-    0 10px 24px -8px rgba(214, 74, 160, 0.5);
+}
+.pill-ghost {
+  box-shadow: inset 0 0 0 1.4px var(--ink);
+}
+.pill-white {
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow);
 }
 
-/* Highlighter stroke for *marked* words */
-.k-mark {
-  background: linear-gradient(transparent 58%, rgba(255, 143, 207, 0.35) 58%, rgba(255, 143, 207, 0.35) 92%, transparent 92%);
-  padding: 0 0.08em;
+/* Selectable chip: white with a hairline, ink when on */
+.chip {
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.chip-on {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: none;
 }
 
-/* Fallback glass for non-Chromium browsers and the admin panel */
+/* White capsule label over images and skies */
+.cap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  box-shadow: 0 1px 2px rgba(30, 22, 12, 0.12);
+}
+
+/* Grain laid over skies and the aura */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.32;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Fallback glass for the admin panel */
 .glass {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  box-shadow: var(--shadow-soft), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 14px 30px -20px rgba(30, 22, 12, 0.35);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 999px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -122,7 +168,6 @@ body {
   animation-duration: 750ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 ::view-transition-old(.nav-forward) {
   --slide-offset: -40px;
   animation: 280ms ease-in both fade reverse, 650ms cubic-bezier(0.22, 1, 0.36, 1) both slide reverse;
@@ -148,11 +193,10 @@ body {
   to { translate: 0; }
 }
 
-:focus-visible {
-  outline: 2px solid #304f67;
-  outline-offset: 3px;
-  border-radius: 999px;
+/* Moving backdrop for the glass preview in /admin (180px = 10 stripe periods) */
+@keyframes stripes {
+  to { transform: translateX(180px); }
 }
 
 html { scroll-behavior: smooth; }
-::selection { background: rgba(255, 143, 207, 0.3); }
+::selection { background: rgba(246, 163, 203, 0.4); }

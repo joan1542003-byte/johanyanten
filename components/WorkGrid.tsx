@@ -2,14 +2,12 @@
 
 import { ViewTransition, useState } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
+import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import type { Category, Img } from "@/lib/content";
-import { calm } from "@/lib/motion";
-import { CardHover } from "./amicro/card-hover";
-import { FadeUp } from "./amicro/fade-up";
-import { ScrollReveal } from "./amicro/scroll-reveal";
-import { Skeleton } from "./amicro/skeleton";
-import { Mark, SectionLabel } from "./Mark";
+import { calm, ease } from "@/lib/motion";
+import { categorySky, skyBackground } from "@/lib/skies";
+import { Head } from "./Mark";
 
 export type CardData = {
   slug: string;
@@ -35,75 +33,105 @@ export function WorkGrid({ lang, projects, labels }: Props) {
 
   return (
     <>
-      <SectionLabel>{labels.eyebrow}</SectionLabel>
-      <ScrollReveal scale={1} yOffset={16}>
-        <h2 className="text-[clamp(1.6rem,3.4vw,2.25rem)] leading-snug font-bold tracking-[-0.025em]">
-          <Mark text={labels.title} />
-        </h2>
-      </ScrollReveal>
+      <Head eyebrow={labels.eyebrow} title={labels.title}>
+        <div className="flex flex-wrap gap-1.5">
+          {available.map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`relative inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-300 ${
+                filter === f ? "text-white" : "chip text-ink hover:bg-paper"
+              }`}
+            >
+              {filter === f && (
+                <motion.span layoutId="filter-pill" transition={calm} className="absolute inset-0 rounded-full bg-ink" />
+              )}
+              {f !== "all" && (
+                <span
+                  aria-hidden
+                  className="relative h-3 w-3 rounded-[4px]"
+                  style={{ background: skyBackground(categorySky[f]) }}
+                />
+              )}
+              <span className="relative">{labels.filters[f]}</span>
+            </button>
+          ))}
+        </div>
+      </Head>
 
-      <div className="k-well mt-8 inline-flex max-w-full flex-wrap gap-1 rounded-[22px] p-1.5">
-        {available.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              filter === f ? "text-ink" : "text-muted hover:text-ink"
-            }`}
-          >
-            {filter === f && (
-              <motion.span layoutId="filter-pill" transition={calm} className="k-button absolute inset-0 rounded-full" />
-            )}
-            <span className="relative">{labels.filters[f]}</span>
-          </button>
-        ))}
-      </div>
-
-      <FadeUp key={filter} yOffset={12} duration={0.8} className="mt-8">
-        <CardHover
-          items={visible}
-          getKey={(p) => p.slug}
-          getHref={(p) => `/${lang}/work/${p.slug}`}
-          highlightClassName="bg-black/[0.035]"
-          className="-mx-2 gap-2 sm:grid-cols-2"
-          renderItem={(p) => <ProjectCard project={p} newLabel={labels.new} />}
-        />
-      </FadeUp>
+      <motion.div layout className="grid gap-x-5 gap-y-9 sm:grid-cols-2">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {visible.map((p, i) => (
+            <motion.div
+              key={p.slug}
+              layout
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.8, ease }}
+              className={i === 0 ? "sm:col-span-2" : ""}
+            >
+              <ProjectCard lang={lang} project={p} wide={i === 0} labels={labels} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
     </>
   );
 }
 
-function ProjectCard({ project, newLabel }: { project: CardData; newLabel: string }) {
-  const [loaded, setLoaded] = useState(false);
-
+function ProjectCard({
+  lang,
+  project,
+  wide,
+  labels,
+}: {
+  lang: string;
+  project: CardData;
+  wide: boolean;
+  labels: Props["labels"];
+}) {
   return (
-    <article className="pb-3">
-      <div className="k-frame overflow-hidden rounded-[36px]">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[28px]">
-          {!loaded && <Skeleton shimmerColor="light" className="absolute inset-0 !rounded-none" />}
-          <ViewTransition name={`cover-${project.slug}`} share="morph" default="none">
-            <Image
-              src={project.cover.src}
-              alt={project.title}
-              fill
-              sizes="(min-width: 640px) 440px, 100vw"
-              onLoad={() => setLoaded(true)}
-              className={`object-cover transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.03] ${
-                loaded ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          </ViewTransition>
+    <Link href={`/${lang}/work/${project.slug}`} transitionTypes={["nav-forward"]} className="group block">
+      <div
+        className={`relative overflow-hidden rounded-[28px] bg-stone shadow-[0_1px_2px_rgba(30,22,12,0.05)] transition-[transform,box-shadow] duration-500 ease-out group-hover:-translate-y-1 group-hover:shadow-[var(--shadow-lift)] ${
+          wide ? "aspect-[16/9]" : "aspect-[4/3]"
+        }`}
+      >
+        <ViewTransition name={`cover-${project.slug}`} share="morph" default="none">
+          <Image
+            src={project.cover.src}
+            alt={project.title}
+            fill
+            preload={wide}
+            sizes={wide ? "(min-width: 1240px) 1130px, 100vw" : "(min-width: 640px) 560px, 100vw"}
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+        </ViewTransition>
+        <div className="absolute inset-x-3 bottom-3 flex flex-wrap gap-1.5">
+          {project.categories.map((c) => (
+            <span key={c} className="cap">
+              <span aria-hidden className="h-2.5 w-2.5 rounded-[3px]" style={{ background: skyBackground(categorySky[c]) }} />
+              {labels.filters[c]}
+            </span>
+          ))}
         </div>
+        {project.isNew && <span className="cap absolute top-3 left-3 !bg-ink !text-white">{labels.new}</span>}
       </div>
-      <div className="px-2 pt-5">
-        <div className="flex items-center gap-2">
-          <h3 className="text-lg leading-snug font-bold tracking-[-0.015em]">{project.title}</h3>
-          {project.isNew && (
-            <span className="k-tag shrink-0 rounded-lg px-2 py-0.5 text-xs font-medium text-ink">{newLabel}</span>
-          )}
+      <div className="flex items-start justify-between gap-4 px-1.5 pt-4">
+        <div>
+          <h3 className="text-lg leading-snug font-semibold">{project.title}</h3>
+          <p className="mt-0.5 text-[15px] text-soft">{project.tagline}</p>
         </div>
-        <p className="mt-1 text-[15px] text-muted">{project.tagline}</p>
+        <span
+          aria-hidden
+          className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-[0_1px_2px_rgba(30,22,12,0.1)] transition-[transform,background-color,color] duration-500 group-hover:bg-ink group-hover:text-white"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M4.5 12h15M14 6.5l5.5 5.5-5.5 5.5" />
+          </svg>
+        </span>
       </div>
-    </article>
+    </Link>
   );
 }

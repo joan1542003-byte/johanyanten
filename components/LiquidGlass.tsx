@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
+import { defaultGlass, type GlassSettings } from "@/lib/glass";
 
 // SVG filters as backdrop-filter only render in Chromium; other browsers get a frosted blur
 const subscribe = () => () => {};
@@ -13,8 +14,8 @@ const isChromium = () =>
  * Displacement map for a rounded rectangle: red encodes horizontal push, blue vertical.
  * The blurred neutral-gray core leaves the middle untouched, so only the rim bends light.
  */
-function displacementMap(w: number, h: number, radius: number) {
-  const rim = Math.max(8, Math.min(w, h) * 0.3);
+function displacementMap(w: number, h: number, radius: number, rimFraction: number) {
+  const rim = Math.max(4, Math.min(w, h) * rimFraction);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
 <defs>
 <linearGradient id="r" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f00"/><stop offset="1" stop-color="#000"/></linearGradient>
@@ -34,9 +35,9 @@ type Props = {
   style?: CSSProperties;
   /** Corner radius in px; use a large number for pills */
   radius?: number;
-  /** Strength of the rim refraction */
-  strength?: number;
-  /** White tint over the glass, 0–1 */
+  /** Look of the glass; the site passes what was saved in /admin */
+  settings?: Partial<GlassSettings>;
+  /** Overrides the saved tint, e.g. to make an open menu more opaque */
   tint?: number;
 };
 
@@ -45,7 +46,8 @@ type Props = {
  * view-transition-name, filter, opacity < 1 or another backdrop-filter, or the
  * browser hides the backdrop from it.
  */
-export function LiquidGlass({ children, className = "", style, radius = 999, strength = 34, tint = 0.3 }: Props) {
+export function LiquidGlass({ children, className = "", style, radius = 999, settings, tint }: Props) {
+  const g = { ...defaultGlass, ...settings };
   const ref = useRef<HTMLDivElement>(null);
   const id = `lg${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
@@ -62,8 +64,9 @@ export function LiquidGlass({ children, className = "", style, radius = 999, str
     return () => ro.disconnect();
   }, [chromium]);
 
-  const refract = chromium && size && size.w > 0 && size.h > 0;
+  const refract = g.enabled && chromium && size && size.w > 0 && size.h > 0;
   const r = size ? Math.min(radius, size.h / 2) : 0;
+  const frosted = `blur(${Math.max(10, g.blur * 8)}px) saturate(${g.saturation})`;
 
   return (
     <div
@@ -72,12 +75,14 @@ export function LiquidGlass({ children, className = "", style, radius = 999, str
       style={{
         ...style,
         borderRadius: radius,
-        background: `rgba(255,255,255,${tint})`,
+        background: `rgba(255,255,255,${tint ?? g.tint})`,
         transition: "background-color 400ms ease",
-        backdropFilter: refract ? `url(#${id}) blur(1.5px) saturate(1.5) brightness(1.04)` : "blur(16px) saturate(1.7)",
-        WebkitBackdropFilter: "blur(16px) saturate(1.7)",
+        backdropFilter: refract
+          ? `url(#${id}) blur(${g.blur}px) saturate(${g.saturation}) brightness(1.04)`
+          : frosted,
+        WebkitBackdropFilter: frosted,
         boxShadow:
-          "inset 0 0 0 1px rgba(255,255,255,0.6), inset 0 1px 1px rgba(255,255,255,0.95), inset 0 -8px 16px -10px rgba(255,255,255,0.7), 0 12px 32px -12px rgba(48,79,103,0.25), 0 0 0 1px rgba(48,79,103,0.06)",
+          "inset 0 0 0 1px rgba(255,255,255,0.65), inset 0 1px 1px rgba(255,255,255,0.95), inset 0 -8px 16px -10px rgba(255,255,255,0.7), 0 1px 2px rgba(30,22,12,0.06), 0 18px 40px -22px rgba(30,22,12,0.35)",
       }}
     >
       {refract && (
@@ -94,7 +99,7 @@ export function LiquidGlass({ children, className = "", style, radius = 999, str
             colorInterpolationFilters="sRGB"
           >
             <feImage
-              href={displacementMap(size.w, size.h, r)}
+              href={displacementMap(size.w, size.h, r, g.rim)}
               x="0"
               y="0"
               width={size.w}
@@ -105,9 +110,9 @@ export function LiquidGlass({ children, className = "", style, radius = 999, str
             {/* Each color channel bends slightly differently: a faint chromatic edge */}
             {(
               [
-                ["r", strength, "1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"],
-                ["g", strength - 3, "0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0"],
-                ["b", strength - 6, "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0"],
+                ["r", g.strength, "1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"],
+                ["g", g.strength - g.aberration, "0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0"],
+                ["b", g.strength - g.aberration * 2, "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0"],
               ] as const
             ).map(([c, s, m]) => [
               <feDisplacementMap

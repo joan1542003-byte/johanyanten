@@ -21,7 +21,7 @@ const sections: {
     title: "Portada",
     fields: [
       { name: "eyebrow", label: "Texto pequeño superior" },
-      { name: "title", label: "Título", hint: "Usa *asteriscos* para resaltar palabras" },
+      { name: "title", label: "Título", hint: "Usa *asteriscos* para la parte en gris" },
       { name: "subtitle", label: "Bajada", multiline: true },
       { name: "cta", label: "Botón" },
       { name: "scroll", label: "Indicador de scroll" },
@@ -32,7 +32,7 @@ const sections: {
     title: "Sobre mí",
     fields: [
       { name: "eyebrow", label: "Texto pequeño superior" },
-      { name: "title", label: "Título", hint: "Usa *asteriscos* para resaltar palabras" },
+      { name: "title", label: "Título", hint: "Usa *asteriscos* para la parte en gris" },
       { name: "body", label: "Texto", multiline: true, paragraphs: true },
     ],
   },
@@ -41,7 +41,7 @@ const sections: {
     title: "Contacto",
     fields: [
       { name: "eyebrow", label: "Texto pequeño superior" },
-      { name: "title", label: "Título", hint: "Usa *asteriscos* para resaltar palabras" },
+      { name: "title", label: "Título", hint: "Usa *asteriscos* para la parte en gris" },
       { name: "subtitle", label: "Bajada", multiline: true },
       { name: "cta", label: "Botón" },
     ],

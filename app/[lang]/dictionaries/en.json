@@ -9,9 +9,20 @@
     "contact": "Contact",
     "menu": "Menu"
   },
+  "hero": {
+    "contact": "Let’s talk",
+    "work": "See work",
+    "toc": {
+      "work": "Work",
+      "disciplines": "What I do",
+      "tools": "Tools",
+      "about": "About",
+      "contact": "Contact"
+    }
+  },
   "work": {
     "eyebrow": "Work",
-    "title": "Selected projects in *branding, information, UX/UI and motion*.",
+    "title": "Selected work, *from brand to screen.*",
     "new": "New",
     "filters": {
       "all": "All",
@@ -22,9 +33,24 @@
       "motion": "Motion"
     }
   },
+  "disciplines": {
+    "eyebrow": "What I do",
+    "title": "Five disciplines, *the same care.*",
+    "items": {
+      "branding": "Identities, logos and visual systems with personality.",
+      "info": "Signage and infographics that explain without noise.",
+      "uxui": "Interfaces and flows that make sense at first sight.",
+      "data": "Data turned into experiences you can feel.",
+      "motion": "Video, animation and editing with rhythm."
+    }
+  },
   "tools": {
     "eyebrow": "Tools",
-    "title": "The tools I *work with* every day.",
+    "title": "What I work with, *every day.*",
+    "groups": {
+      "design": "Design",
+      "motion": "Motion"
+    },
     "items": {
       "figma": "Prototyping and interfaces. My home base where every project comes together.",
       "indesign": "Editorial design, typography and professional layout.",
@@ -42,11 +68,6 @@
     "next": "Next project"
   },
   "footer": "Designed and built by Johan Yanten.",
-  "hero": {
-    "contact": "Let’s talk",
-    "view": "View project",
-    "next": "Another project"
-  },
   "contact": {
     "copied": "Copied!"
   },
