@@ -30,7 +30,10 @@ export function Nav({ lang, labels, glass }: Props) {
     if (!isHome) return;
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(e.target.id as Section);
+        for (const e of entries) {
+          const id = e.target.id as Section;
+          setActive((prev) => (e.isIntersecting ? id : prev === id ? null : prev));
+        }
       },
       { rootMargin: "-45% 0px -50% 0px" },
     );
@@ -56,7 +59,7 @@ export function Nav({ lang, labels, glass }: Props) {
         <Link
           href={`/${lang}`}
           aria-label="JY, Johan Yanten"
-          className="mr-1 flex h-9 w-9 items-center justify-center rounded-full bg-ink text-[13px] font-semibold tracking-tight text-paper transition-transform active:scale-90"
+          className="mr-1 flex h-9 w-9 items-center justify-center rounded-full bg-ink text-[13px] font-semibold tracking-tight text-white transition-transform active:scale-90"
         >
           JY
         </Link>
@@ -66,8 +69,8 @@ export function Nav({ lang, labels, glass }: Props) {
               key={s}
               href={`/${lang}#${s}`}
               onMouseEnter={() => setHovered(s)}
-              className={`relative rounded-full px-4 py-2 t-label transition-colors duration-500 ${
-                highlighted === s ? "text-paper" : "text-ink/70"
+              className={`relative rounded-full px-4 py-2 text-[14px] font-medium transition-colors duration-500 ${
+                highlighted === s ? "text-white" : "text-ink/70"
               }`}
             >
               {highlighted === s && (
@@ -91,7 +94,7 @@ function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string
     <Link href={href} className="ml-1 inline-flex rounded-full bg-ink/10 p-0.5 text-[13px] font-semibold">
       <span className="sr-only">{lang === "es" ? "Cambiar idioma:" : "Switch language:"}</span>
       {["es", "en"].map((l) => (
-        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-paper" : "text-ink/60"}`}>
+        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-white" : "text-ink/60"}`}>
           {l === lang && <motion.span layoutId={id} transition={calm} className="absolute inset-0 rounded-full bg-ink" />}
           <span className="relative">{l}</span>
         </span>
@@ -146,7 +149,7 @@ function MobileMenu({
           <Link
             href={`/${lang}`}
             onClick={() => setOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-paper"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-white"
           >
             JY
           </Link>

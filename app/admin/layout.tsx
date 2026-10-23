@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { instrument } from "@/components/fonts";
+import { fontVariables } from "@/components/fonts";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
-    <html lang="es" className={`${instrument.variable} h-full antialiased`}>
+    <html lang="es" className={`${fontVariables} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
     </html>
   );

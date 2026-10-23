@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
-import { instrument } from "@/components/fonts";
+import { fontVariables } from "@/components/fonts";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Sections";
 import { Providers } from "@/components/Providers";
@@ -43,7 +43,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const [dict, content] = await Promise.all([getDictionary(lang), getSiteContent()]);
 
   return (
-    <html lang={lang} data-scroll-behavior="smooth" className={`${instrument.variable} dark h-full antialiased`}>
+    <html lang={lang} data-scroll-behavior="smooth" className={`${fontVariables} h-full antialiased`}>
       <body className="min-h-full">
         <Providers>
           <Nav lang={lang} labels={dict.nav} glass={content.glass} />

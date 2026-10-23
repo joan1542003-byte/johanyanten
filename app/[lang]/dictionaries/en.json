@@ -11,9 +11,7 @@
   },
   "hero": {
     "contact": "Let’s talk",
-    "work": "See work",
-    "scene": "The Andes · 7:42 p.m.",
-    "sceneLabel": "Landscape drawn with characters: the Andes at dusk, a condor gliding and its reflection on a lake"
+    "work": "See work"
   },
   "work": {
     "eyebrow": "Work",
@@ -67,14 +65,12 @@
     "copied": "Copied!"
   },
   "top": "Back to top",
-  "scenes": {
-    "desert": {
-      "caption": "Atacama Desert · 3:12 a.m.",
-      "label": "Landscape drawn with characters: the Milky Way over the Atacama dunes, with radio telescopes and cacti"
-    },
-    "sea": {
-      "caption": "Lighthouse on the Pacific · 11:58 p.m.",
-      "label": "Landscape drawn with characters: a lighthouse on a cliff sweeps its light over the sea under the moon"
-    }
+  "overview": {
+    "featured": "Featured",
+    "disciplines": "What I do",
+    "city": "Santiago, Chile",
+    "time": "Local time",
+    "instagram": "Instagram",
+    "open": "View profile"
   }
 }

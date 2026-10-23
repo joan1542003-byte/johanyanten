@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { getDictionary, hasLocale } from "./dictionaries";
-import { getProjects, getSiteContent } from "@/lib/content";
+import { getProjects, getSiteContent, type Category } from "@/lib/content";
 import { Hero } from "@/components/Hero";
 import { WorkGrid } from "@/components/WorkGrid";
 import { PageTransition } from "@/components/PageTransition";
-import { About, Contact, Disciplines, Tools } from "@/components/Sections";
+import { About, Contact } from "@/components/Sections";
 import { INSTAGRAM, SITE_URL } from "@/lib/site";
 
 export default async function Home({ params }: PageProps<"/[lang]">) {
@@ -20,6 +20,8 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
     isNew: p.is_new,
     cover: p.cover,
   }));
+  const counts = { branding: 0, info: 0, uxui: 0, data: 0, motion: 0 } satisfies Record<Category, number>;
+  for (const p of projects) for (const c of p.categories) counts[c]++;
 
   // Structured data so search engines know who the site is about
   const person = {
@@ -35,14 +37,19 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
     <PageTransition>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
       <main>
-        <Hero {...content.hero[lang]} labels={dict.hero} />
-        <section id="work" className="section wrap scroll-mt-20">
+        <Hero
+          lang={lang}
+          hero={content.hero[lang]}
+          contact={content.contact[lang]}
+          labels={{ ...dict.hero, ...dict.overview }}
+          featured={cards[0]}
+          disciplines={{ title: dict.disciplines.title, names: dict.work.filters, counts }}
+        />
+        <section id="work" className="wrap scroll-mt-24 pt-24 sm:pt-32">
           <WorkGrid lang={lang} projects={cards} labels={dict.work} />
         </section>
-        <Disciplines {...dict.disciplines} names={dict.work.filters} />
-        <Tools {...dict.tools} />
-        <About {...content.about[lang]} scene={dict.scenes.desert} />
-        <Contact {...content.contact[lang]} copied={dict.contact.copied} scene={dict.scenes.sea} />
+        <About {...content.about[lang]} tools={{ label: dict.tools.eyebrow, title: dict.tools.title, items: dict.tools.items }} />
+        <Contact {...content.contact[lang]} copied={dict.contact.copied} />
       </main>
     </PageTransition>
   );

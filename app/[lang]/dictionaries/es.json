@@ -11,9 +11,7 @@
   },
   "hero": {
     "contact": "Hablemos",
-    "work": "Ver proyectos",
-    "scene": "Cordillera de los Andes · 19:42",
-    "sceneLabel": "Paisaje dibujado con caracteres: la cordillera de los Andes al atardecer, un cóndor planeando y el reflejo en un lago"
+    "work": "Ver proyectos"
   },
   "work": {
     "eyebrow": "Proyectos",
@@ -67,14 +65,12 @@
     "copied": "¡Copiado!"
   },
   "top": "Volver arriba",
-  "scenes": {
-    "desert": {
-      "caption": "Desierto de Atacama · 03:12",
-      "label": "Paisaje dibujado con caracteres: la Vía Láctea sobre las dunas de Atacama, con radiotelescopios y cactus"
-    },
-    "sea": {
-      "caption": "Faro en el Pacífico · 23:58",
-      "label": "Paisaje dibujado con caracteres: un faro sobre un acantilado barre con su luz el mar bajo la luna"
-    }
+  "overview": {
+    "featured": "Destacado",
+    "disciplines": "Lo que hago",
+    "city": "Santiago, Chile",
+    "time": "Hora local",
+    "instagram": "Instagram",
+    "open": "Ver perfil"
   }
 }

@@ -1,9 +1,17 @@
-import { Instrument_Sans } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 
-// Instrument Sans, the interface typeface of Relevo, self-hosted by Next
-export const instrument = Instrument_Sans({
-  variable: "--font-instrument",
+// Geist: a clean interface typeface, close to the system fonts of an app; self-hosted by Next
+export const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
+
+// For numbers that tick, like the clock
+export const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+export const fontVariables = `${geist.variable} ${geistMono.variable}`;
