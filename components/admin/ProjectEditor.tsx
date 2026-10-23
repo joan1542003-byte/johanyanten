@@ -16,6 +16,9 @@ const categories: { id: Category; label: string }[] = [
 
 type Draft = Omit<Project, "id" | "position" | "cover"> & { cover: Img | null };
 
+/** Narrower images than this look soft once they fill a card on a large, high-density screen */
+const SHARP_WIDTH = 1600;
+
 const empty: Draft = {
   slug: "",
   title: { es: "", en: "" },
@@ -73,6 +76,16 @@ export function ProjectEditor({
     try {
       const imgs = await Promise.all([...files].map((f) => uploadImage(f, folder)));
       onDone(imgs);
+      // Small files look soft once they fill a card on a large or high-density screen
+      const small = imgs.filter((img) => img.w < SHARP_WIDTH);
+      if (small.length) {
+        notify(
+          small.length === 1
+            ? `Esa imagen mide ${small[0].w} px de ancho: se verá borrosa en pantallas grandes. Usa al menos ${SHARP_WIDTH} px.`
+            : `${small.length} imágenes miden menos de ${SHARP_WIDTH} px de ancho y se verán borrosas en pantallas grandes.`,
+          "error",
+        );
+      }
     } catch (e) {
       notify((e as Error).message, "error");
     } finally {
@@ -219,6 +232,11 @@ export function ProjectEditor({
               <img src={draft.cover.src} alt="" className="max-h-72 w-full rounded-2xl object-cover" />
             ) : null}
           </ImageDrop>
+          {draft.cover && draft.cover.w < SHARP_WIDTH && (
+            <p className="mt-2 text-sm text-amber-700">
+              Esta portada mide {draft.cover.w} px de ancho y se ve borrosa en grande. Sube una de al menos {SHARP_WIDTH} px.
+            </p>
+          )}
         </div>
 
         <div>

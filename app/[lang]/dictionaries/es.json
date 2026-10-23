@@ -24,7 +24,8 @@
       "uxui": "UX/UI",
       "data": "Datos",
       "motion": "Motion"
-    }
+    },
+    "view": "Ver proyecto"
   },
   "disciplines": {
     "eyebrow": "Lo que hago",
@@ -58,7 +59,8 @@
     "about": "De qué trata",
     "video": "Video",
     "gallery": "Galería",
-    "next": "Siguiente proyecto"
+    "next": "Siguiente proyecto",
+    "play": "Ver video"
   },
   "footer": "Diseñado y construido por Johan Yanten.",
   "contact": {

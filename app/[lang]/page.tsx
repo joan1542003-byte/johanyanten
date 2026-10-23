@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { getDictionary, hasLocale } from "./dictionaries";
 import { getProjects, getSiteContent, type Category } from "@/lib/content";
+import { tintOf } from "@/lib/colors";
+import { displayImage } from "@/lib/images";
 import { Hero } from "@/components/Hero";
-import { WorkGrid } from "@/components/WorkGrid";
+import { WorkGrid, type CardData } from "@/components/WorkGrid";
 import { PageTransition } from "@/components/PageTransition";
 import { About, Contact } from "@/components/Sections";
 import { INSTAGRAM, SITE_URL } from "@/lib/site";
@@ -12,14 +14,20 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   if (!hasLocale(lang)) notFound();
   const [dict, projects, content] = await Promise.all([getDictionary(lang), getProjects(), getSiteContent()]);
 
-  const cards = projects.map((p) => ({
-    slug: p.slug,
-    title: p.title[lang],
-    tagline: p.tagline[lang],
-    categories: p.categories,
-    isNew: p.is_new,
-    cover: p.cover,
-  }));
+  const cards: CardData[] = await Promise.all(
+    projects.map(async (p) => {
+      const image = displayImage(p);
+      return {
+        slug: p.slug,
+        title: p.title[lang],
+        tagline: p.tagline[lang],
+        categories: p.categories,
+        isNew: p.is_new,
+        image,
+        tint: await tintOf(image.src),
+      };
+    }),
+  );
   const counts = { branding: 0, info: 0, uxui: 0, data: 0, motion: 0 } satisfies Record<Category, number>;
   for (const p of projects) for (const c of p.categories) counts[c]++;
 
@@ -41,12 +49,12 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
           lang={lang}
           hero={content.hero[lang]}
           contact={content.contact[lang]}
-          labels={{ ...dict.hero, ...dict.overview }}
+          labels={{ ...dict.hero, ...dict.overview, view: dict.work.view, copied: dict.contact.copied, filters: dict.work.filters }}
           featured={cards[0]}
-          disciplines={{ title: dict.disciplines.title, names: dict.work.filters, counts }}
+          disciplines={{ title: dict.disciplines.title, counts }}
         />
-        <section id="work" className="wrap scroll-mt-24 pt-24 sm:pt-32">
-          <WorkGrid lang={lang} projects={cards} labels={dict.work} />
+        <section id="work" className="wrap scroll-mt-24 pt-24 sm:pt-36">
+          <WorkGrid lang={lang} projects={cards} featured={cards[0].slug} labels={dict.work} />
         </section>
         <About {...content.about[lang]} tools={{ label: dict.tools.eyebrow, title: dict.tools.title, items: dict.tools.items }} />
         <Contact {...content.contact[lang]} copied={dict.contact.copied} />

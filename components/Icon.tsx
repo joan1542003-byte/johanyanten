@@ -46,12 +46,12 @@ export function Icon({ name, className = "h-[18px] w-[18px]" }: { name: IconName
   );
 }
 
-/** Round arrow that appears on a card under the pointer (always shown on touch screens) */
+/** Round arrow in the corner of a linked card, for touch screens (pointer devices get the follow label) */
 export function ArrowBadge({ className = "" }: { className?: string }) {
   return (
     <span
       aria-hidden
-      className={`grid h-10 w-10 place-items-center rounded-full bg-white/90 text-ink shadow-[0_4px_14px_rgba(0,0,0,0.16)] transition-[opacity,scale] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [@media(hover:hover)]:scale-75 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:scale-100 [@media(hover:hover)]:group-hover:opacity-100 ${className}`}
+      className={`grid h-10 w-10 place-items-center rounded-full bg-white/90 text-ink shadow-[0_4px_14px_rgba(0,0,0,0.16)] [@media(hover:hover)]:hidden ${className}`}
     >
       <Icon name="arrow" className="h-[18px] w-[18px] -rotate-45" />
     </span>

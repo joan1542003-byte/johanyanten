@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { GlassSettings } from "@/lib/glass";
 import { calm, ease } from "@/lib/motion";
@@ -69,12 +69,17 @@ export function Nav({ lang, labels, glass }: Props) {
               key={s}
               href={`/${lang}#${s}`}
               onMouseEnter={() => setHovered(s)}
-              className={`relative rounded-full px-4 py-2 text-[14px] font-medium transition-colors duration-500 ${
-                highlighted === s ? "text-white" : "text-ink/70"
+              className={`relative rounded-full px-4 py-2 text-[14px] font-medium transition-colors duration-300 ${
+                highlighted === s ? "text-ink" : "text-ink/65"
               }`}
             >
               {highlighted === s && (
-                <motion.span layoutId="nav-indicator" transition={calm} className="absolute inset-0 rounded-full bg-ink" />
+                // A white pill under dark text: readable at every moment of the slide
+                <motion.span
+                  layoutId="nav-indicator"
+                  transition={calm}
+                  className="absolute inset-0 rounded-full bg-white shadow-[0_1px_3px_rgba(29,29,31,0.14),0_4px_12px_-4px_rgba(29,29,31,0.16)]"
+                />
               )}
               <span className="relative">{labels[s]}</span>
             </Link>
@@ -94,8 +99,10 @@ function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string
     <Link href={href} className="ml-1 inline-flex rounded-full bg-ink/10 p-0.5 text-[13px] font-semibold">
       <span className="sr-only">{lang === "es" ? "Cambiar idioma:" : "Switch language:"}</span>
       {["es", "en"].map((l) => (
-        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-white" : "text-ink/60"}`}>
-          {l === lang && <motion.span layoutId={id} transition={calm} className="absolute inset-0 rounded-full bg-ink" />}
+        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-ink" : "text-ink/55"}`}>
+          {l === lang && (
+            <motion.span layoutId={id} transition={calm} className="absolute inset-0 rounded-full bg-white shadow-[0_1px_3px_rgba(29,29,31,0.14)]" />
+          )}
           <span className="relative">{l}</span>
         </span>
       ))}
@@ -120,17 +127,43 @@ function MobileMenu({
 }) {
   const [open, setOpen] = useState(false);
   const [vw, setVw] = useState(0);
+  const box = useRef<HTMLDivElement>(null);
 
   const toggle = () => {
     setVw(window.innerWidth);
     setOpen((o) => !o);
   };
 
+  // An open menu closes with Escape or a tap anywhere outside it
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    // A tap outside only closes the menu: the click it would produce is swallowed, so it doesn't
+    // also follow whatever link sits under the finger
+    const swallow = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    const onDown = (e: PointerEvent) => {
+      if (box.current?.contains(e.target as Node)) return;
+      setOpen(false);
+      window.addEventListener("click", swallow, { capture: true, once: true });
+      setTimeout(() => window.removeEventListener("click", swallow, { capture: true }), 500);
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onDown);
+    };
+  }, [open]);
+
   const closedW = 196;
   const openW = Math.max(closedW, vw - 24);
 
   return (
     <motion.div
+      ref={box}
       className="pointer-events-auto sm:hidden"
       initial={false}
       animate={{ height: open ? 268 : 52, width: open ? openW : closedW }}

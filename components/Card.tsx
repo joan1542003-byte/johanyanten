@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode, type Ref } from "react";
+import type { CSSProperties, PointerEvent, ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
   className?: string;
-  /** Makes the whole card a link that lifts on hover */
+  /** Makes the whole card a link that lifts and tilts toward the pointer */
   href?: string;
   /** Opens href in a new tab */
   external?: boolean;
@@ -16,59 +16,53 @@ type Props = {
   /** Entrance delay in seconds, for staggered grids */
   delay?: number;
   dark?: boolean;
+  /** The project's own color as "r g b": tints the glow, the shade over the image and the labels */
+  tint?: string;
   id?: string;
   style?: CSSProperties;
 };
 
-// A bento card: it rises in once it reaches the screen, and its edge lights up under the pointer
-export function Card({ children, className = "", href, external, label, transitionTypes, delay = 0, dark, id, style }: Props) {
-  const ref = useRef<HTMLElement>(null);
-  const [shown, setShown] = useState(false);
+// Pointer position as CSS variables: px for the edge light and the follow label, -1…1 for the tilt
+function track(e: PointerEvent<HTMLElement>) {
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+  el.style.setProperty("--mx", `${x}px`);
+  el.style.setProperty("--my", `${y}px`);
+  el.style.setProperty("--tx", ((x / r.width) * 2 - 1).toFixed(3));
+  el.style.setProperty("--ty", ((y / r.height) * 2 - 1).toFixed(3));
+}
+function settle(e: PointerEvent<HTMLElement>) {
+  e.currentTarget.style.setProperty("--tx", "0");
+  e.currentTarget.style.setProperty("--ty", "0");
+}
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -6% 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const onPointerMove = (e: PointerEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
-  };
-
+// A bento card. It rises in when it reaches the screen (see RevealScript); no React state involved
+export function Card({ children, className = "", href, external, label, transitionTypes, delay = 0, dark, tint, id, style }: Props) {
   const props = {
-    className: `card reveal ${shown ? "is-in" : ""} ${dark ? "card-dark" : ""} ${href ? "card-link block" : ""} ${className}`,
-    style: { ...style, "--delay": `${delay}s` } as CSSProperties,
-    onPointerMove,
+    className: `card reveal ${dark ? "card-dark" : ""} ${href ? "card-link block" : ""} ${className}`,
+    style: { ...style, "--delay": `${delay}s`, ...(tint ? { "--tint": tint } : {}) } as CSSProperties,
+    onPointerMove: track,
+    onPointerLeave: settle,
   };
 
   if (href && external) {
     return (
-      <a ref={ref as Ref<HTMLAnchorElement>} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} {...props}>
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} {...props}>
         {children}
       </a>
     );
   }
   if (href) {
     return (
-      <Link ref={ref as Ref<HTMLAnchorElement>} href={href} transitionTypes={transitionTypes} aria-label={label} {...props}>
+      <Link href={href} transitionTypes={transitionTypes} aria-label={label} {...props}>
         {children}
       </Link>
     );
   }
   return (
-    <div ref={ref as Ref<HTMLDivElement>} id={id} {...props}>
+    <div id={id} {...props}>
       {children}
     </div>
   );

@@ -5,8 +5,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { Category } from "@/lib/content";
 import { ease } from "@/lib/motion";
-import { categorySky, skyBackground } from "@/lib/skies";
 import { useCopy } from "@/hooks/use-copy";
+import { CategoryIcon } from "./CategoryIcon";
 import { Icon } from "./Icon";
 import { Tone } from "./Mark";
 
@@ -46,12 +46,11 @@ export function DisciplinesCard({
             type="button"
             onClick={() => showDiscipline(c)}
             disabled={!counts[c]}
-            className="group chip h-9 pr-1.5 pl-3 text-[14px] hover:bg-[rgba(29,29,31,0.09)] disabled:opacity-40"
+            className="group chip h-9 gap-2 pr-1.5 pl-3 text-[14px] hover:bg-[rgba(29,29,31,0.09)] disabled:opacity-40"
           >
-            <span
-              aria-hidden
-              className="h-3 w-3 rounded-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-125"
-              style={{ background: skyBackground(categorySky[c]) }}
+            <CategoryIcon
+              category={c}
+              className="h-4 w-4 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:scale-110"
             />
             {names[c]}
             <span className="grid h-6 min-w-6 place-items-center rounded-full bg-white px-1.5 text-[12px] font-semibold tabular-nums shadow-[0_1px_2px_rgba(29,29,31,0.1)]">
@@ -99,26 +98,54 @@ function InstagramGlyph({ className }: { className: string }) {
   );
 }
 
-export function InstagramCard({ href, handle, open, label }: { href: string; handle: string; open: string; label: string }) {
+export function InstagramCard({
+  href,
+  handle,
+  open,
+  label,
+  copied,
+}: {
+  href: string;
+  handle: string;
+  open: string;
+  label: string;
+  copied: string;
+}) {
+  const { copy, done } = useCopy(handle);
   return (
-    <div
-      className="flex h-full flex-col justify-between gap-5 p-5 text-white sm:p-6"
-      style={{
-        background:
-          "radial-gradient(90% 90% at 15% 105%, #ffd76a 0%, #ff8a3d 30%, rgba(255,90,90,0) 60%), radial-gradient(90% 90% at 100% 0%, #6b5bff 0%, rgba(107,91,255,0) 60%), linear-gradient(135deg, #e1306c 0%, #c13584 50%, #833ab4 100%)",
-      }}
-    >
-      <InstagramGlyph className="h-9 w-9 drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]" />
-      <div>
-        <p className="t-label text-white/80">{label}</p>
-        <p className="mt-0.5 truncate text-[clamp(17px,1.5vw,21px)] font-semibold tracking-tight">{handle}</p>
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-light mt-3 h-10 w-full px-4 text-[15px]"
+    <div className="flex h-full flex-col justify-between gap-4 p-5 sm:p-6">
+      {/* Glyph on the left, copy button in the corner: nothing has to share a row on a narrow card */}
+      <div className="flex items-start justify-between gap-2">
+        <span className="grid h-12 w-12 place-items-center rounded-full bg-[conic-gradient(from_210deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75)] p-[2px]">
+          <span className="grid h-full w-full place-items-center rounded-full bg-white text-ink">
+            <InstagramGlyph className="h-[22px] w-[22px]" />
+          </span>
+        </span>
+        <button
+          type="button"
+          onClick={copy}
+          aria-label={done ? copied : handle}
+          title={handle}
+          className="btn btn-soft relative h-10 w-10 shrink-0 overflow-hidden px-0"
         >
-          {open} <Icon name="external" className="h-4 w-4" />
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={done ? "done" : "copy"}
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6 }}
+              transition={{ duration: 0.35, ease }}
+            >
+              <Icon name={done ? "check" : "copy"} className="h-4 w-4" />
+            </motion.span>
+          </AnimatePresence>
+        </button>
+      </div>
+      <div className="min-w-0">
+        <p className="t-label text-ink-2">{done ? copied : label}</p>
+        <p className="t-card mt-0.5 truncate text-[clamp(17px,1.5vw,22px)]">{handle}</p>
+        <a href={href} target="_blank" rel="noopener noreferrer" className="btn btn-primary mt-3 h-10 w-full px-4 text-[14px]">
+          {open} <Icon name="external" className="h-3.5 w-3.5" />
         </a>
       </div>
     </div>

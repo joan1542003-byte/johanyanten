@@ -12,7 +12,7 @@ export function About({
   tools,
 }: AboutContent & { tools: { label: string; title: string; items: Record<string, string> } }) {
   return (
-    <section id="about" className="wrap scroll-mt-24 pt-24 sm:pt-32">
+    <section id="about" className="wrap scroll-mt-24 pt-24 sm:pt-36">
       <div className="bento">
         <Card className="col-span-2 sm:row-span-2">
           <div className="flex h-full flex-col gap-6 p-6 sm:p-8">
@@ -51,12 +51,12 @@ export function About({
 // The call to action: a dark card with soft color glows
 export function Contact({ title, subtitle, cta, instagram, handle, copied }: ContactContent & { copied: string }) {
   return (
-    <section id="contact" className="wrap scroll-mt-24 pt-24 sm:pt-32">
+    <section id="contact" className="wrap scroll-mt-24 pt-24 sm:pt-36">
       <Card dark>
         <div className="grid gap-10 p-7 sm:p-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:p-16">
           <div>
             <h2 className="t-title max-w-[16ch]">
-              <Tone text={title} soft="text-white/50" />
+              <Tone text={title} soft="text-white/65" />
             </h2>
             <p className="t-lead mt-4 max-w-md text-white/70">{subtitle}</p>
           </div>

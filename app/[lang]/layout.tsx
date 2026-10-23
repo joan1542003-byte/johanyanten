@@ -5,6 +5,7 @@ import { fontVariables } from "@/components/fonts";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Sections";
 import { Providers } from "@/components/Providers";
+import { RevealStart, RevealWatch } from "@/components/RevealScript";
 import { SITE_URL } from "@/lib/site";
 import { getSiteContent } from "@/lib/content";
 import "../globals.css";
@@ -43,13 +44,15 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const [dict, content] = await Promise.all([getDictionary(lang), getSiteContent()]);
 
   return (
-    <html lang={lang} data-scroll-behavior="smooth" className={`${fontVariables} h-full antialiased`}>
+    <html lang={lang} data-scroll-behavior="smooth" className={`${fontVariables} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
+        <RevealStart />
         <Providers>
           <Nav lang={lang} labels={dict.nav} glass={content.glass} />
           {children}
           <Footer text={dict.footer} top={dict.top} />
         </Providers>
+        <RevealWatch />
       </body>
     </html>
   );

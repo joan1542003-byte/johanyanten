@@ -1,6 +1,23 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 
-// Geist: a clean interface typeface, close to the system fonts of an app; self-hosted by Next
+// Headlines: Bricolage Grotesque, a grotesque with character; its width and optical size are tuned per role
+export const display = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  axes: ["opsz", "wdth"],
+  display: "swap",
+});
+
+// The emphasized words of a headline, in a serif italic
+export const serif = Instrument_Serif({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
+  display: "swap",
+});
+
+// Interface and reading text
 export const geist = Geist({
   variable: "--font-geist",
   subsets: ["latin"],
@@ -14,4 +31,4 @@ export const geistMono = Geist_Mono({
   display: "swap",
 });
 
-export const fontVariables = `${geist.variable} ${geistMono.variable}`;
+export const fontVariables = `${display.variable} ${serif.variable} ${geist.variable} ${geistMono.variable}`;
