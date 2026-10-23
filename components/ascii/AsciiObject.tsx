@@ -142,7 +142,7 @@ function AsciiObjectCanvas({
     const BANDS = 6;
     const DUST = " .·:+";
     const paintField = (t: number) => {
-      ctx.fillStyle = "rgba(20,19,18,0.16)";
+      ctx.fillStyle = "rgba(128,122,116,0.22)";
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           if (z[x + y * cols]) continue;

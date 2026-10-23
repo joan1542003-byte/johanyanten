@@ -44,6 +44,8 @@ export function AsciiImage({ className = "", alt, ...props }: Omit<ImageProps, "
       return (x / cols) * 0.65 + (y / rows) * 0.35 + Math.random() * 0.08;
     });
     ctx.font = `${CHAR_W * 1.55}px ${MONO}`;
+    // Cover cells in the page color, whichever theme is on
+    const paper = `rgba(${getComputedStyle(el).getPropertyValue("--paper-rgb").trim() || "247, 244, 240"},0.96)`;
     ctx.textBaseline = "top";
     let frame = 0;
     let start = 0;
@@ -63,7 +65,7 @@ export function AsciiImage({ className = "", alt, ...props }: Omit<ImageProps, "
         if (d < 0) continue; // uncovered
         const x = (i % cols) * CHAR_W;
         const y = Math.floor(i / cols) * lineH;
-        ctx.fillStyle = "rgba(247,244,240,0.96)";
+        ctx.fillStyle = paper;
         ctx.fillRect(x, y, CHAR_W, lineH);
         const near = d < 0.1;
         const shimmer = !near && Math.random() < 0.08;
@@ -85,7 +87,7 @@ export function AsciiImage({ className = "", alt, ...props }: Omit<ImageProps, "
     <div
       ref={box}
       className="absolute inset-0 overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #f6efe7 0%, #efe6f6 50%, #e6f0f7 100%)" }}
+      style={{ background: "linear-gradient(135deg, rgba(246,163,203,0.14) 0%, rgba(197,178,246,0.14) 50%, rgba(157,214,244,0.14) 100%), var(--stone)" }}
     >
       <Image
         {...props}

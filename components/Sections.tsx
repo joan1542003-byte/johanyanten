@@ -6,6 +6,7 @@ import { Head, Tone } from "./Mark";
 import { Sky } from "./Sky";
 import { ContactActions } from "./ContactCard";
 import { Art, type ArtName } from "./ascii/Art";
+import { AsciiScene } from "./ascii/AsciiScene";
 import { AsciiWord } from "./ascii/AsciiWord";
 import { Icon } from "./Icon";
 
@@ -94,25 +95,39 @@ export function Tools({ title, groups, items }: { title: string; groups: Record<
   );
 }
 
-export function About({ title, body }: AboutContent) {
+type SceneText = { caption: string; label: string };
+
+// Full-screen scene behind a section, a wash so the words stay readable, and the caption of the place
+function Backdrop({ scene, text, wash }: { scene: "desert" | "sea"; text: SceneText; wash: string }) {
   return (
-    <section id="about" className="section wrap scroll-mt-20">
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-20">
-        <ScrollReveal scale={1} yOffset={24} className="relative order-last lg:order-first">
-          <div
-            aria-hidden
-            className="absolute inset-[-10%] -z-10 rounded-full opacity-70 blur-3xl"
-            style={{ background: "radial-gradient(closest-side, rgba(246,163,203,0.35), rgba(157,214,244,0.25), transparent)" }}
-          />
-          <Art name="desk" interval={140} className="tone mx-auto w-fit text-[clamp(8px,2.4vw,13px)] font-semibold" />
-        </ScrollReveal>
-        <div>
+    <>
+      <div className="absolute inset-0 -z-10">
+        <AsciiScene scene={scene} label={text.label} />
+      </div>
+      <div aria-hidden className={`pointer-events-none absolute inset-0 -z-10 ${wash}`} />
+      <p className="pointer-events-none absolute right-[clamp(18px,4vw,40px)] bottom-6 font-mono text-[13px] text-ink/45">
+        {text.caption}
+      </p>
+    </>
+  );
+}
+
+export function About({ title, body, scene }: AboutContent & { scene: SceneText }) {
+  return (
+    <section id="about" className="relative isolate scroll-mt-20 overflow-hidden">
+      <Backdrop
+        scene="desert"
+        text={scene}
+        wash="bg-[linear-gradient(180deg,rgba(var(--paper-rgb),0.96)_0%,rgba(var(--paper-rgb),0.8)_42%,rgba(var(--paper-rgb),0)_68%)] lg:bg-[linear-gradient(90deg,rgba(var(--paper-rgb),0.95)_0%,rgba(var(--paper-rgb),0.75)_34%,rgba(var(--paper-rgb),0)_58%)]"
+      />
+      <div className="wrap flex min-h-[100svh] items-start py-[clamp(96px,12vw,160px)] lg:items-center">
+        <div className="max-w-[540px]">
           <Head title={title} />
           {body
             .filter((p) => p.trim())
             .map((p, i) => (
               <ScrollReveal key={i} scale={1} yOffset={18}>
-                <p className="t-lead mt-5 max-w-[56ch] text-soft first:mt-0">
+                <p className="t-lead mt-5 text-soft first:mt-0">
                   <Tone text={p} />
                 </p>
               </ScrollReveal>
@@ -130,22 +145,24 @@ export function Contact({
   instagram,
   handle,
   copied,
-  ascii,
-}: ContactContent & { copied: string; ascii: string }) {
+  scene,
+}: ContactContent & { copied: string; scene: SceneText }) {
   return (
-    <section id="contact" className="section scroll-mt-20 text-center">
-      <ScrollReveal scale={1} yOffset={24}>
-        <div className="mx-auto h-[clamp(84px,21vw,300px)] w-full max-w-[1400px] px-2">
-          <AsciiWord text={ascii} cell={8} />
-        </div>
-      </ScrollReveal>
-      <ScrollReveal scale={1} yOffset={24} className="wrap mt-8 grid justify-items-center gap-5">
-        <h2 className="t-h2 max-w-[20ch]">
-          <Tone text={title} />
-        </h2>
-        <p className="t-lead max-w-md text-soft">{subtitle}</p>
-        <ContactActions href={instagram} cta={cta} handle={handle} copied={copied} />
-      </ScrollReveal>
+    <section id="contact" className="relative isolate scroll-mt-20 overflow-hidden text-center">
+      <Backdrop
+        scene="sea"
+        text={scene}
+        wash="bg-[radial-gradient(60%_42%_at_50%_36%,rgba(var(--paper-rgb),0.9)_0%,rgba(var(--paper-rgb),0.55)_55%,rgba(var(--paper-rgb),0)_100%)]"
+      />
+      <div className="wrap flex min-h-[100svh] flex-col items-center pt-[clamp(120px,20svh,220px)] pb-24">
+        <ScrollReveal scale={1} yOffset={24} className="grid justify-items-center gap-5">
+          <h2 className="t-h2 max-w-[20ch]">
+            <Tone text={title} />
+          </h2>
+          <p className="t-lead max-w-md text-soft">{subtitle}</p>
+          <ContactActions href={instagram} cta={cta} handle={handle} copied={copied} />
+        </ScrollReveal>
+      </div>
     </section>
   );
 }

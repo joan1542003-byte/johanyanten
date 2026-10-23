@@ -41,8 +41,8 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         </section>
         <Disciplines {...dict.disciplines} names={dict.work.filters} />
         <Tools {...dict.tools} />
-        <About {...content.about[lang]} />
-        <Contact {...content.contact[lang]} copied={dict.contact.copied} ascii={dict.contact.ascii} />
+        <About {...content.about[lang]} scene={dict.scenes.desert} />
+        <Contact {...content.contact[lang]} copied={dict.contact.copied} scene={dict.scenes.sea} />
       </main>
     </PageTransition>
   );

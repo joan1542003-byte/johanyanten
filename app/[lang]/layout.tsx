@@ -43,7 +43,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const [dict, content] = await Promise.all([getDictionary(lang), getSiteContent()]);
 
   return (
-    <html lang={lang} data-scroll-behavior="smooth" className={`${instrument.variable} h-full antialiased`}>
+    <html lang={lang} data-scroll-behavior="smooth" className={`${instrument.variable} dark h-full antialiased`}>
       <body className="min-h-full">
         <Providers>
           <Nav lang={lang} labels={dict.nav} glass={content.glass} />

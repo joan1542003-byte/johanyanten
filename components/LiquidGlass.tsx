@@ -75,14 +75,13 @@ export function LiquidGlass({ children, className = "", style, radius = 999, set
       style={{
         ...style,
         borderRadius: radius,
-        background: `rgba(255,255,255,${tint ?? g.tint})`,
+        background: `rgba(var(--glass-rgb),${tint ?? g.tint})`,
         transition: "background-color 400ms ease",
         backdropFilter: refract
           ? `url(#${id}) blur(${g.blur}px) saturate(${g.saturation}) brightness(1.04)`
           : frosted,
         WebkitBackdropFilter: frosted,
-        boxShadow:
-          "inset 0 0 0 1px rgba(255,255,255,0.65), inset 0 1px 1px rgba(255,255,255,0.95), inset 0 -8px 16px -10px rgba(255,255,255,0.7), 0 1px 2px rgba(30,22,12,0.06), 0 18px 40px -22px rgba(30,22,12,0.35)",
+        boxShadow: "var(--glass-edge)",
       }}
     >
       {refract && (

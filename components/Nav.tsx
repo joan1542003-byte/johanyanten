@@ -56,7 +56,7 @@ export function Nav({ lang, labels, glass }: Props) {
         <Link
           href={`/${lang}`}
           aria-label="JY, Johan Yanten"
-          className="mr-1 flex h-9 w-9 items-center justify-center rounded-full bg-ink text-[13px] font-semibold tracking-tight text-white transition-transform active:scale-90"
+          className="mr-1 flex h-9 w-9 items-center justify-center rounded-full bg-ink text-[13px] font-semibold tracking-tight text-paper transition-transform active:scale-90"
         >
           JY
         </Link>
@@ -67,7 +67,7 @@ export function Nav({ lang, labels, glass }: Props) {
               href={`/${lang}#${s}`}
               onMouseEnter={() => setHovered(s)}
               className={`relative rounded-full px-4 py-2 t-label transition-colors duration-500 ${
-                highlighted === s ? "text-white" : "text-ink/70"
+                highlighted === s ? "text-paper" : "text-ink/70"
               }`}
             >
               {highlighted === s && (
@@ -88,10 +88,10 @@ export function Nav({ lang, labels, glass }: Props) {
 
 function LangSwitch({ lang, href, id }: { lang: string; href: string; id: string }) {
   return (
-    <Link href={href} className="ml-1 inline-flex rounded-full bg-white/70 p-0.5 text-[13px] font-semibold">
+    <Link href={href} className="ml-1 inline-flex rounded-full bg-ink/10 p-0.5 text-[13px] font-semibold">
       <span className="sr-only">{lang === "es" ? "Cambiar idioma:" : "Switch language:"}</span>
       {["es", "en"].map((l) => (
-        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-white" : "text-ink/60"}`}>
+        <span key={l} className={`relative rounded-full px-2.5 py-1.5 uppercase ${l === lang ? "text-paper" : "text-ink/60"}`}>
           {l === lang && <motion.span layoutId={id} transition={calm} className="absolute inset-0 rounded-full bg-ink" />}
           <span className="relative">{l}</span>
         </span>
@@ -146,7 +146,7 @@ function MobileMenu({
           <Link
             href={`/${lang}`}
             onClick={() => setOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-paper"
           >
             JY
           </Link>
@@ -155,7 +155,7 @@ function MobileMenu({
             onClick={toggle}
             aria-expanded={open}
             aria-label={labels.menu}
-            className="ml-auto flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full bg-white shadow-[0_1px_2px_rgba(30,22,12,0.1)]"
+            className="ml-auto flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full bg-ink/10"
           >
             <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 3 : 0 }} transition={calm} className="h-[1.5px] w-4 rounded bg-ink" />
             <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -3.5 : 0 }} transition={calm} className="h-[1.5px] w-4 rounded bg-ink" />

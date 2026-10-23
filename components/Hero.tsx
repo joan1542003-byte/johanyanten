@@ -1,23 +1,21 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import type { HeroContent } from "@/lib/content";
-import { Aura } from "./Aura";
 import { BlurText } from "./amicro/blur-text";
 import { FadeUp } from "./amicro/fade-up";
 import { MagneticButton } from "./amicro/magnetic-button";
-import { AsciiObject } from "./ascii/AsciiObject";
+import { AsciiScene } from "./ascii/AsciiScene";
 import { Icon } from "./Icon";
 
 type Props = HeroContent & {
-  labels: { contact: string; work: string; object: string; objectLabel: string };
+  labels: { contact: string; work: string; scene: string; sceneLabel: string };
 };
 
-// Deep pastel gradient across the second half of the headline (readable at 3:1+ on paper)
+// Light pastel gradient across the second half of the headline (readable on the dark page)
 const STOPS = [
-  [181, 83, 127],
-  [138, 91, 201],
-  [63, 127, 194],
+  [243, 154, 196],
+  [185, 156, 243],
+  [130, 189, 242],
 ];
 const tone = (t: number) => {
   const seg = t < 0.5 ? 0 : 1;
@@ -26,45 +24,24 @@ const tone = (t: number) => {
   return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(",")})`;
 };
 
-const wideQuery = "(min-width: 1024px)";
-const subscribeWide = (cb: () => void) => {
-  const mq = window.matchMedia(wideQuery);
-  mq.addEventListener("change", cb);
-  return () => mq.removeEventListener("change", cb);
-};
-
-// Full-bleed hero: the whole background is ASCII art, the words sit on top of it
+// The whole screen is an ASCII landscape: the Andes at dusk over a lake. The sun sets as you scroll
 export function Hero({ eyebrow, title, subtitle, labels }: Props) {
-  const wide = useSyncExternalStore(subscribeWide, () => window.matchMedia(wideQuery).matches, () => true);
-
   return (
-    <header className="relative isolate flex min-h-[clamp(640px,100svh,980px)] items-end overflow-hidden pt-28 pb-[clamp(40px,7vw,96px)]">
-      <Aura mode="hero" className="opacity-70" />
-      <div className="absolute inset-0">
-        <AsciiObject
-          shape="torus"
-          field
-          label={labels.objectLabel}
-          size={0.3}
-          center={wide ? [0.72, 0.5] : [0.5, 0.3]}
-        />
+    <header className="relative isolate flex min-h-[100svh] items-end overflow-hidden pt-28 pb-[clamp(40px,7vw,96px)]">
+      <div className="absolute inset-0 -z-10">
+        <AsciiScene scene="andes" label={labels.sceneLabel} />
       </div>
-      {/* Paper wash behind the words so the art never fights the text */}
+      {/* Darker water under the words, so the art never fights the text */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: wide
-            ? "linear-gradient(90deg, rgba(247,244,240,0.92) 0%, rgba(247,244,240,0.7) 38%, rgba(247,244,240,0) 62%)"
-            : "linear-gradient(0deg, rgba(247,244,240,0.96) 0%, rgba(247,244,240,0.8) 45%, rgba(247,244,240,0) 70%)",
-        }}
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(0deg,rgba(var(--paper-rgb),0.95)_0%,rgba(var(--paper-rgb),0.7)_32%,rgba(var(--paper-rgb),0)_58%)] lg:bg-[radial-gradient(70%_75%_at_12%_92%,rgba(var(--paper-rgb),0.92)_0%,rgba(var(--paper-rgb),0.6)_45%,rgba(var(--paper-rgb),0)_75%)]"
       />
 
-      <div className="wrap pointer-events-none relative">
-        <div className="pointer-events-auto grid max-w-[640px] justify-items-start gap-7">
+      <div className="wrap">
+        <div className="grid max-w-[960px] justify-items-start gap-6">
           <FadeUp>
-            <p className="t-label text-ink/70">
-              Johan Yanten <span className="text-ink/40">— {eyebrow}</span>
+            <p className="t-label text-ink/75">
+              Johan Yanten <span className="text-ink/45">— {eyebrow}</span>
             </p>
           </FadeUp>
 
@@ -89,7 +66,7 @@ export function Hero({ eyebrow, title, subtitle, labels }: Props) {
       </div>
 
       <FadeUp delay={1.6} className="pointer-events-none absolute right-[clamp(18px,4vw,40px)] bottom-6 hidden lg:block">
-        <p className="font-mono text-[13px] text-ink/50">↻ {labels.object}</p>
+        <p className="font-mono text-[13px] text-ink/45">{labels.scene}</p>
       </FadeUp>
     </header>
   );
