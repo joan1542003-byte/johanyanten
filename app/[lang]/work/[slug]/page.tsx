@@ -55,6 +55,15 @@ function frame(img: Img, maxHeight = "82svh"): CSSProperties {
   return { aspectRatio: `${ratio}`, width: `min(100%, calc(${maxHeight} * ${ratio}), ${img.w}px)` };
 }
 
+/**
+ * `sizes` for a YouTube poster. The poster is always a 16:9 frame; for a vertical video only its
+ * middle strip fills the box, so it has to be fetched as wide as the box is tall times 16/9.
+ */
+function posterSizes(ratio: number) {
+  const need = (w: number) => Math.round(Math.max(w, (w / ratio) * (16 / 9)));
+  return `(min-width: 1280px) ${need(Math.min(1216, 740 * ratio))}px, ${need(390)}px`;
+}
+
 export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[slug]">) {
   const { lang, slug } = await params;
   const found = await getProject(slug);
@@ -145,7 +154,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/work/[s
               id={project.youtube}
               title={`${dict.project.video}: ${project.title[lang]}`}
               play={dict.project.play}
-              sizes={`(min-width: 1280px) ${Math.round(Math.min(1216, 740 * ratio))}px, 100vw`}
+              sizes={posterSizes(ratio)}
             />
           </Card>
         )}

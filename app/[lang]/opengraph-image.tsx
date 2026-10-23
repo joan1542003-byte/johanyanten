@@ -8,11 +8,24 @@ export const alt = "Johan Yanten";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+/** The headline face of the site (Bricolage Grotesque) as TTF, which is what the image renderer reads */
+async function bricolage(opsz: number, weight: 400 | 700) {
+  try {
+    const css = await (await fetch(`https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@${opsz},${weight}`)).text();
+    const url = css.match(/url\((https:[^)]+\.ttf)\)/)?.[1];
+    if (!url) return null;
+    return { name: "Bricolage", data: await (await fetch(url)).arrayBuffer(), weight, style: "normal" as const };
+  } catch {
+    return null;
+  }
+}
+
 // Share card as a small bento, like the site: the name on a white card, four projects beside it
 export default async function Image({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const locale = hasLocale(lang) ? lang : "es";
-  const [dict, projects] = await Promise.all([getDictionary(locale), getProjects()]);
+  const [dict, projects, bold, regular] = await Promise.all([getDictionary(locale), getProjects(), bricolage(96, 700), bricolage(24, 400)]);
+  const fonts = [bold, regular].filter((f) => f !== null);
   const thumbs = (await Promise.all(projects.slice(0, 4).map((p) => thumbnail(displayImage(p).src, 520)))).filter(Boolean) as string[];
   const card = { borderRadius: 34, boxShadow: "0 0 0 1px rgba(29,29,31,0.05), 0 18px 40px -22px rgba(29,29,31,0.35)" };
 
@@ -47,11 +60,11 @@ export default async function Image({ params }: { params: Promise<{ lang: string
             >
               JY
             </div>
-            <div style={{ fontSize: 24, color: "#66666b" }}>johanyanten.vercel.app</div>
+            <div style={{ fontSize: 24, fontWeight: 400, color: "#66666b" }}>johanyanten.vercel.app</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 92, fontWeight: 700, color: "#1d1d1f", letterSpacing: -4, lineHeight: 0.95 }}>Johan Yanten</div>
-            <div style={{ fontSize: 30, color: "#66666b", marginTop: 20, lineHeight: 1.3 }}>{dict.meta.description}</div>
+            <div style={{ fontSize: 96, fontWeight: 700, color: "#1d1d1f", letterSpacing: -4, lineHeight: 0.95 }}>Johan Yanten</div>
+            <div style={{ fontSize: 30, fontWeight: 400, color: "#66666b", marginTop: 20, lineHeight: 1.3 }}>{dict.meta.description}</div>
           </div>
         </div>
         <div style={{ width: 470, display: "flex", flexWrap: "wrap", gap: 22 }}>
@@ -62,6 +75,6 @@ export default async function Image({ params }: { params: Promise<{ lang: string
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: fonts.length ? fonts : undefined },
   );
 }
