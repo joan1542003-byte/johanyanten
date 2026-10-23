@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { CELL_RATIO, MONO, fitCanvas } from "@/lib/ascii";
+import { CELL_RATIO, MONO, fitCanvas, inkOf } from "@/lib/ascii";
 import { scenes, type Grid, type SceneName } from "@/lib/scenes";
 import { Safe } from "../Safe";
 
@@ -18,7 +18,8 @@ function SceneCanvas({ scene, label, className = "", cell: baseCell = 9 }: Props
     const render = scenes[scene];
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const glyphs: string[] = [];
-    const styles = new Map<number, string>();
+    const ink = inkOf(el);
+    const styles: string[] = [];
     const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 };
     const start = performance.now();
     let ctx: CanvasRenderingContext2D;
@@ -40,21 +41,17 @@ function SceneCanvas({ scene, label, className = "", cell: baseCell = 9 }: Props
 
       ctx.clearRect(0, 0, grid.w, grid.h);
       const { cols, ch, r, g, b, a } = grid;
-      let lastKey = -1;
+      let last = -1;
       for (let i = 0; i < ch.length; i++) {
         const c = ch[i];
-        if (c === 32 || a[i] < 0.03) continue;
-        // Colors are rounded to 5 bits and opacity to 8 steps, so fillStyle rarely changes
-        const al = Math.min(7, (a[i] * 8) | 0);
-        const key = ((r[i] >> 3) << 13) | ((g[i] >> 3) << 8) | ((b[i] >> 3) << 3) | al;
-        if (key !== lastKey) {
-          let style = styles.get(key);
-          if (!style) {
-            style = `rgba(${(r[i] >> 3) * 8 + 4},${(g[i] >> 3) * 8 + 4},${(b[i] >> 3) * 8 + 4},${(al + 1) / 8})`;
-            styles.set(key, style);
-          }
-          ctx.fillStyle = style;
-          lastKey = key;
+        if (c === 32) continue;
+        // One color only: how bright a cell is in the scene becomes how opaque its glyph is (16 steps)
+        const lum = (r[i] * 0.3 + g[i] * 0.59 + b[i] * 0.11) / 255;
+        const level = Math.min(15, (a[i] * Math.min(1, 0.12 + lum * 1.2) * 16) | 0);
+        if (level < 1) continue;
+        if (level !== last) {
+          ctx.fillStyle = styles[level] ??= `rgba(${ink},${(level + 1) / 16})`;
+          last = level;
         }
         ctx.fillText((glyphs[c] ??= String.fromCharCode(c)), (i % cols) * cell, ((i / cols) | 0) * lineH);
       }

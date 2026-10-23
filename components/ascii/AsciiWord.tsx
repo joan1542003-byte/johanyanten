@@ -2,7 +2,7 @@
 
 import { Safe } from "@/components/Safe";
 import { useEffect, useRef } from "react";
-import { CELL_RATIO, MONO, RAMP, auraColor, fitCanvas } from "@/lib/ascii";
+import { CELL_RATIO, MONO, RAMP, fitCanvas, inkOf } from "@/lib/ascii";
 
 /**
  * A word written in ASCII that rises out of slow waves of characters,
@@ -27,6 +27,7 @@ function AsciiWordCanvas({
     const el = ref.current;
     if (!el) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ink = inkOf(el);
     let frame = 0;
     let visible = true;
     let mask: Float32Array = new Float32Array(0);
@@ -93,8 +94,7 @@ function AsciiWordCanvas({
           const inWord = mask[i] > 0.35;
           const v = inWord ? 0.7 + mask[i] * 0.3 : Math.min(0.55, wave * waves + ripple * 0.5);
           if (v < 0.1) continue;
-          const [r, g, b] = auraColor(x / cols);
-          ctx.fillStyle = `rgba(${r},${g},${b},${inWord ? 0.95 : 0.18 + v * 0.5})`;
+          ctx.fillStyle = `rgba(${ink},${inWord ? 0.95 : 0.12 + v * 0.4})`;
           ctx.fillText(RAMP[Math.min(RAMP.length - 1, Math.round(v * (RAMP.length - 1)))], x * cell, y * lineH);
         }
       }

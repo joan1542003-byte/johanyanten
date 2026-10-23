@@ -9,23 +9,11 @@ export const CELL_RATIO = 0.55;
 
 export const randomGlyph = () => NOISE[(Math.random() * NOISE.length) | 0];
 
-/** Aura palette across a position 0–1: pink, violet, blue, amber */
-const STOPS: [number, [number, number, number]][] = [
-  [0, [217, 84, 142]],
-  [0.35, [138, 91, 201]],
-  [0.65, [63, 127, 194]],
-  [1, [226, 150, 32]],
-];
-export function auraColor(t: number): [number, number, number] {
-  for (let i = 1; i < STOPS.length; i++) {
-    const [p1, c1] = STOPS[i];
-    const [p0, c0] = STOPS[i - 1];
-    if (t <= p1) {
-      const k = (t - p0) / (p1 - p0);
-      return [0, 1, 2].map((j) => Math.round(c0[j] + (c1[j] - c0[j]) * k)) as [number, number, number];
-    }
-  }
-  return STOPS[STOPS.length - 1][1];
+/** The one color all ASCII art is drawn in: the page ink, as "r,g,b" (light on the dark site) */
+export function inkOf(el: Element) {
+  const hex = getComputedStyle(el).getPropertyValue("--ink").trim() || "#f2eee8";
+  const n = parseInt(hex.slice(1), 16);
+  return `${n >> 16},${(n >> 8) & 255},${n & 255}`;
 }
 
 /** Sizes a canvas to its box at device resolution and returns the drawing context */

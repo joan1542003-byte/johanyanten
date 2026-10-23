@@ -3,7 +3,7 @@
 import Image, { type ImageProps } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
-import { CELL_RATIO, MONO, RAMP, auraColor, fitCanvas, randomGlyph } from "@/lib/ascii";
+import { CELL_RATIO, MONO, RAMP, fitCanvas, inkOf, randomGlyph } from "@/lib/ascii";
 
 const CHAR_W = 8;
 const WIPE_MS = 1150;
@@ -45,6 +45,7 @@ export function AsciiImage({ className = "", alt, ...props }: Omit<ImageProps, "
     });
     ctx.font = `${CHAR_W * 1.55}px ${MONO}`;
     // Cover cells in the page color, whichever theme is on
+    const ink = inkOf(el);
     const paper = `rgba(${getComputedStyle(el).getPropertyValue("--paper-rgb").trim() || "247, 244, 240"},0.96)`;
     ctx.textBaseline = "top";
     let frame = 0;
@@ -70,8 +71,7 @@ export function AsciiImage({ className = "", alt, ...props }: Omit<ImageProps, "
         const near = d < 0.1;
         const shimmer = !near && Math.random() < 0.08;
         if (!near && !shimmer && (i + Math.floor(now / 220)) % 7 !== 0) continue;
-        const [r, g, b] = auraColor((i % cols) / cols);
-        ctx.fillStyle = `rgba(${r},${g},${b},${near ? 0.95 : 0.35})`;
+        ctx.fillStyle = `rgba(${ink},${near ? 0.9 : 0.3})`;
         ctx.fillText(near ? RAMP[RAMP.length - 1 - Math.floor((d / 0.1) * 6)] : randomGlyph(), x, y);
       }
       if (start && p >= 1.05) {

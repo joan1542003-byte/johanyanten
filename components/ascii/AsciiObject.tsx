@@ -2,7 +2,7 @@
 
 import { Safe } from "@/components/Safe";
 import { useEffect, useRef } from "react";
-import { CELL_RATIO, MONO, auraColor, fitCanvas } from "@/lib/ascii";
+import { CELL_RATIO, MONO, fitCanvas, inkOf } from "@/lib/ascii";
 
 // Shading ramp for the 3D object, dark to bright
 const SHADE = ".,-~:;=!*#$@";
@@ -138,11 +138,11 @@ function AsciiObjectCanvas({
       }
     };
 
-    // Group characters by color band and shade, so the fill color changes rarely
-    const BANDS = 6;
+    // Group characters by shade, so the fill color changes rarely
+    const ink = inkOf(el);
     const DUST = " .·:+";
     const paintField = (t: number) => {
-      ctx.fillStyle = "rgba(128,122,116,0.22)";
+      ctx.fillStyle = `rgba(${ink},0.14)`;
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           if (z[x + y * cols]) continue;
@@ -157,18 +157,11 @@ function AsciiObjectCanvas({
     const paint = (t = 0) => {
       ctx.clearRect(0, 0, w, h);
       if (field) paintField(t);
-      const buckets: number[][] = Array.from({ length: BANDS * SHADE.length }, () => []);
-      for (let i = 0; i < z.length; i++) {
-        if (z[i] === 0) continue;
-        const band = Math.min(BANDS - 1, Math.floor(((i % cols) / cols) * BANDS));
-        buckets[band * SHADE.length + lum[i]].push(i);
-      }
-      buckets.forEach((cells, k) => {
+      const buckets: number[][] = Array.from({ length: SHADE.length }, () => []);
+      for (let i = 0; i < z.length; i++) if (z[i] !== 0) buckets[lum[i]].push(i);
+      buckets.forEach((cells, level) => {
         if (!cells.length) return;
-        const band = Math.floor(k / SHADE.length);
-        const level = k % SHADE.length;
-        const [r, g, b] = auraColor((band + 0.5) / BANDS);
-        ctx.fillStyle = `rgba(${r},${g},${b},${0.35 + (level / (SHADE.length - 1)) * 0.65})`;
+        ctx.fillStyle = `rgba(${ink},${0.3 + (level / (SHADE.length - 1)) * 0.7})`;
         const ch = SHADE[level];
         for (const i of cells) ctx.fillText(ch, (i % cols) * cell, Math.floor(i / cols) * lineH);
       });
