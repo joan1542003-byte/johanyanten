@@ -43,7 +43,7 @@ export function ClockCard({ city, label }: { city: string; label: string }) {
 
   return (
     <div className="flex h-full flex-col justify-between gap-4 p-5 sm:p-6">
-      <svg viewBox="0 0 100 100" className="h-[clamp(84px,9vw,120px)] w-[clamp(84px,9vw,120px)]" aria-hidden>
+      <svg viewBox="0 0 100 100" className="h-[clamp(72px,7vw,104px)] w-[clamp(72px,7vw,104px)]" aria-hidden>
         <defs>
           <radialGradient id="face" cx="50%" cy="35%" r="70%">
             <stop offset="0" stopColor="#ffffff" />

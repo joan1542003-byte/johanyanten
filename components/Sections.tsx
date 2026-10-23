@@ -14,7 +14,7 @@ export function About({
   return (
     <section id="about" className="wrap scroll-mt-24 pt-24 sm:pt-32">
       <div className="bento">
-        <Card className="col-span-2 lg:row-span-2">
+        <Card className="col-span-2 sm:row-span-2">
           <div className="flex h-full flex-col gap-6 p-6 sm:p-8">
             <span
               aria-hidden
@@ -40,7 +40,7 @@ export function About({
             </div>
           </div>
         </Card>
-        <Card delay={0.12} className="col-span-2 lg:row-span-2">
+        <Card delay={0.12} className="col-span-2 sm:row-span-2">
           <ToolsCard {...tools} />
         </Card>
       </div>

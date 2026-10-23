@@ -92,7 +92,7 @@ p {
     .bento { grid-auto-rows: 230px; }
   }
   @media (min-width: 1024px) {
-    .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(200px, 17vw, 250px); }
+    .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(224px, 17vw, 252px); }
   }
 
   /* ---------- Cards ---------- */

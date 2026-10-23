@@ -32,7 +32,7 @@ export function DisciplinesCard({
   counts: Record<Category, number>;
 }) {
   return (
-    <div className="flex h-full flex-col justify-between gap-6 p-6 sm:p-7">
+    <div className="flex h-full flex-col justify-between gap-4 p-6 sm:p-7">
       <div>
         <p className="t-label text-ink-2">{label}</p>
         <h2 className="t-card mt-1.5 max-w-[22ch]">
@@ -46,7 +46,7 @@ export function DisciplinesCard({
             type="button"
             onClick={() => showDiscipline(c)}
             disabled={!counts[c]}
-            className="group chip h-10 pr-2 pl-3 text-[15px] hover:bg-[rgba(29,29,31,0.09)] disabled:opacity-40"
+            className="group chip h-9 pr-1.5 pl-3 text-[14px] hover:bg-[rgba(29,29,31,0.09)] disabled:opacity-40"
           >
             <span
               aria-hidden
